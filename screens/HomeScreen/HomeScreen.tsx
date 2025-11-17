@@ -71,7 +71,7 @@ const HomeScreen = ({navigation}:{navigation:any}) => {
     const fetchData = async () => {
         try {
             // Replace with your server's IP address if testing on a physical device
-            const response = await axios.get('http://localhost:4000/data'); 
+            const response = await axios.get('http://localhost:4000/homescreen-data'); 
             // The response.data should have the structure { data: [...] }
             setImages(response.data.data); 
             setIsLoading(false);

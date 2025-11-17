@@ -60,8 +60,8 @@ const CarouselItem = ({ image, index, scrollX }: CarouselItemProps) => {
 
 const HomeScreen = ({navigation}:{navigation:any}) => {
 
-    const [images, setImages] = useState<string[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+        const [images, setImages] = useState<string[]>([]);
+        const [isLoading, setIsLoading] = useState(true);
 
     const scrollX = useSharedValue(0);
     const isScrolling = useSharedValue(false);

@@ -1,11 +1,12 @@
 import { View, Text, Dimensions, StyleSheet, Button, TouchableOpacity, Pressable, Alert, TextInput } from 'react-native';
-import React, { useState } from 'react';
-import { DATA } from './data';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 const textValue = "Enter Log In Code"
 
 const LogIn = () => {
- 
+
+    const [codes, setCodes] = useState<string[]>([]);
     const [inputValue, setInputValue] = useState("");
     
 
@@ -14,11 +15,26 @@ const LogIn = () => {
         setInputValue(numericValue);
     };
 
+    const fetchData = async () => {
+        try {
+            // Replace with your server's IP address if testing on a physical device
+            const response = await axios.get('http://localhost:4000/login-data'); 
+            // The response.data should have the structure { data: [...] }
+            setCodes(response.data.data); 
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            Alert.alert("Error", "Failed to fetch data from the server.");
+        }
+    };
+    useEffect(() => {
+        fetchData();
+    }, []);
+
     const handleLogInPress = () => {
         let loggedIn = false;
 
-        for(let i = 0; i < DATA.length; i++){
-            if (DATA[i] == inputValue) {
+        for(let i = 0; i < codes.length; i++){
+            if (codes[i] == inputValue) {
                 loggedIn = true
             }
         }

@@ -1,6 +1,6 @@
-import { View, Text, Dimensions, StyleSheet, StatusBar, ScrollView, Image, Button, TouchableOpacity, Pressable, Alert } from 'react-native';
-import React, { useState } from 'react';
-import { DATA } from './data';
+import { View, Text, Dimensions, StyleSheet, StatusBar, ScrollView, Image, Button, TouchableOpacity, Pressable, Alert, ActivityIndicator } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import Animated, { Extrapolation, interpolate, scrollTo, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue, useAnimatedRef, SharedValue } from 'react-native-reanimated';
 import {useNavigation} from '@react-navigation/native';
 
@@ -60,11 +60,30 @@ const CarouselItem = ({ image, index, scrollX }: CarouselItemProps) => {
 
 const HomeScreen = ({navigation}:{navigation:any}) => {
 
+    const [images, setImages] = useState<string[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
     const scrollX = useSharedValue(0);
     const isScrolling = useSharedValue(false);
     const animatedRef = useAnimatedRef<Animated.ScrollView>();
     const [isInitialized, setIsInitialized] = useState(false);
 
+    const fetchData = async () => {
+        try {
+            // Replace with your server's IP address if testing on a physical device
+            const response = await axios.get('http://localhost:4000/data'); 
+            // The response.data should have the structure { data: [...] }
+            setImages(response.data.data); 
+            setIsLoading(false);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            setIsLoading(false);
+            Alert.alert("Error", "Failed to fetch data from the server.");
+        }
+    };
+    useEffect(() => {
+        fetchData();
+    }, []);
 
     const onScrollHandler = useAnimatedScrollHandler({
        onScroll: (event) => {
@@ -95,6 +114,15 @@ const HomeScreen = ({navigation}:{navigation:any}) => {
         navigation.navigate("LogIn");
     };
 
+    if (isLoading) {
+        return (
+            <View style={Styles.container}>
+                <ActivityIndicator size="large" color="#7c7085ff" />
+                <Text>Loading images...</Text>
+            </View>
+        );
+    }
+
 
    return (
        <View style={Styles.container}>
@@ -118,7 +146,7 @@ const HomeScreen = ({navigation}:{navigation:any}) => {
                        }
                    }}
                >
-                   {DATA.map((image, index) => (
+                   {images.map((image, index) => ( 
                        <CarouselItem
                            key={`image_${index}`}
                            image={image}

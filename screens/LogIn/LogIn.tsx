@@ -6,7 +6,7 @@ const textValue = "Enter Log In Code"
 
 const LogIn = ({navigation}:{navigation:any}) => {
 
-    const [codes, setCodes] = useState<string[]>([]);
+    const [passwords, setPassword] = useState<string[]>([]);
     const [inputValue, setInputValue] = useState("");
     
 
@@ -17,10 +17,17 @@ const LogIn = ({navigation}:{navigation:any}) => {
 
     const fetchData = async () => {
         try {
-            // Replace with your server's IP address if testing on a physical device
             const response = await axios.get('http://localhost:4000/login-data'); 
             // The response.data should have the structure { data: [...] }
-            setCodes(response.data.data); 
+            const responseData = response.data
+
+            if (responseData && responseData.length > 0) {
+                const firstObject = responseData[0];
+
+                const passwords = firstObject.codes;
+                console.log("passwords are being set to: ", passwords);
+                setPassword(passwords);
+            }
         } catch (error) {
             console.error("Error fetching data:", error);
             Alert.alert("Error", "Failed to fetch data from the server.");
@@ -31,10 +38,16 @@ const LogIn = ({navigation}:{navigation:any}) => {
     }, []);
 
     const handleLogInPress = () => {
-        let loggedIn = false;
 
-        for(let i = 0; i < codes.length; i++){
-            if (codes[i] == inputValue) {
+        let loggedIn = false;
+        let passedPassword = inputValue.toString();
+        console.log("after button pressed", passwords);
+
+        console.log(passedPassword);
+        for(let i = 0; i < passwords.length; i++){
+            console.log(passwords[i]);
+            if (passwords[i] == passedPassword) {
+                console.log(passwords[i]);
                 loggedIn = true
             }
         }

@@ -70,10 +70,21 @@ const HomeScreen = ({navigation}:{navigation:any}) => {
 
     const fetchData = async () => {
         try {
-            // Replace with your server's IP address if testing on a physical device
             const response = await axios.get('http://localhost:4000/homescreen-data'); 
             // The response.data should have the structure { data: [...] }
-            setImages(response.data.data); 
+            const responseData = response.data
+
+            if (responseData && responseData.length > 0) {
+                const firstObject = responseData[0];
+
+                const imageUrls = firstObject.url;
+                console.log(imageUrls);
+                setImages(imageUrls);
+            } else {
+            console.log("No data found in the response for images.");
+            setImages([]);
+            }
+
             setIsLoading(false);
         } catch (error) {
             console.error("Error fetching data:", error);

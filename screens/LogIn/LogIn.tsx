@@ -4,7 +4,7 @@ import axios from 'axios';
 
 const textValue = "Enter Log In Code"
 
-const LogIn = () => {
+const LogIn = ({navigation}:{navigation:any}) => {
 
     const [codes, setCodes] = useState<string[]>([]);
     const [inputValue, setInputValue] = useState("");
@@ -40,6 +40,7 @@ const LogIn = () => {
         }
         if (loggedIn) {
             Alert.alert("Button Pressed!", "Correct Log In!");
+            navigation.navigate("LandingPage");
         }
         else {
             Alert.alert("Button Pressed!", "Incorrect Log In!");

@@ -25,14 +25,11 @@ const LogIn = ({navigation}:{navigation:any}) => {
             const response = await axios.get('http://localhost:4000/login-data'); 
             // The response.data should have the structure { data: [object] }
             const responseData = response.data
-            console.log("responce: ", responseData);
 
             if (responseData && responseData.length > 0) {
-                console.log(responseData);
                 const firstObject = responseData[0].users;
 
                 setUserData(firstObject);
-                console.log("object is: ", firstObject);
             }
         } catch (error) {
             console.error("Error fetching data:", error);
@@ -47,20 +44,25 @@ const LogIn = ({navigation}:{navigation:any}) => {
 
         let loggedIn = false;
         let passedPassword = inputValue.toString();
+        let userName = "";
 
         for(let i = 0; i < userData.length; i++){
             const userDataCode = userData[i].code;
-            console.log(userDataCode);
+
 
 
             if (userDataCode == passedPassword) {
+                const userDataName = userData[i].name;
+                console.log("Name is: ",userDataName);
+                userName = userData[i].name;
                 console.log(userData[i].code);
                 loggedIn = true
             }
         }
         if (loggedIn) {
             Alert.alert("Button Pressed!", "Correct Log In!");
-            navigation.navigate("LandingPage", {inputCode: passedPassword});
+            console.log("Name will be: ", userName);
+            navigation.navigate("LandingPage", {inputCode: userName});
         }
         else {
             Alert.alert("Button Pressed!", "Incorrect Log In!");

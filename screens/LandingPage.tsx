@@ -31,13 +31,13 @@ type LandingPageRouteProp = RouteProp<RootStackParamList, 'LandingPage'>;
 const LandingPage = ({ route }: { route: LandingPageRouteProp }) => {
     const { inputCode } = route.params;
 
-    
+
 
     return(
         <View style={Styles.container}>
             <View style={Styles.horizontalBoarderTop}>
                 <Text style={Styles.welcomeText}>Welcome</Text>
-                <Text>{inputCode}</Text>
+                <Text style={Styles.userNameText}>{inputCode}</Text>
             </View>
 
             <View style={Styles.childConatinerTop}>
@@ -92,6 +92,12 @@ const Styles = StyleSheet.create({
     welcomeText: {
         color: '#fff',
         fontSize: 36,
+        fontWeight: '600',
+        textAlign: 'left',
+    },
+    userNameText: {
+        color: '#fff',
+        fontSize: 24,
         fontWeight: '600',
         textAlign: 'left',
     },

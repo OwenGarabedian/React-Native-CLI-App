@@ -3,6 +3,8 @@ import React from 'react';
 import HomeScreen from './screens/HomeScreen/HomeScreen';
 import LogIn from './screens/LogIn/LogIn';
 import LandingPage from './screens/LandingPage'
+import DataBase from './screens/DataBase';
+import TextMessages from './screens/TextMessages'
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -13,7 +15,9 @@ function RootStack() {
     <Stack.Navigator initialRouteName="HomeScreen" screenOptions={{ animation: "none" }}>
       <Stack.Screen name="HomeScreen" component={HomeScreen} options={{ headerShown: false}} />
       <Stack.Screen name="LogIn" component={LogIn} options={{ headerShown: false, gestureEnabled: false }} />
-      <Stack.Screen name="LandingPage" component={LandingPage} options={{ headerShown: false, gestureEnabled: false }} />
+      <Stack.Screen name="LandingPage" component={LandingPage as any} options={{ headerShown: false, gestureEnabled: false }} />
+      <Stack.Screen name="DataBase" component={DataBase} options={{ headerShown: false, gestureEnabled: false }} />
+      <Stack.Screen name="TextMessages" component={TextMessages} options={{ headerShown: false, gestureEnabled: false }} />
     </Stack.Navigator>
   )
 }

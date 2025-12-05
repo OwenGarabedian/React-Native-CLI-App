@@ -28,8 +28,11 @@ type LandingPageRouteProp = RouteProp<RootStackParamList, 'LandingPage'>;
 const LandingPage = ({ route }: { route: LandingPageRouteProp }) => {
     const { inputCode } = route.params;
 
-    const headerColors = ['#8b0894ff', '#974fd1ff', '#cb83fbff'];
-    const waveColors = ['#8b0894ff', '#974fd1ff', '#cb83fbff'];
+    const headerColors = ['#782a7eff', '#974fd1ff', '#cb83fbff'];
+    const topWaveColors = ['#782a7eff', '#974fd1ff', '#cb83fbff'];
+
+    const bottomColors = ['#a0ace7', '#5f6bbd', '#5e669bff'];
+    const bottomWaveColors = ['#a0ace7', '#5f6bbd', '#5e669bff'];
 
 
     return(
@@ -58,9 +61,9 @@ const LandingPage = ({ route }: { route: LandingPageRouteProp }) => {
                         >
                         <Defs>
                             <LinearGradient id="topWaveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                                <Stop offset="0%" stopColor={waveColors[0]} />
-                                <Stop offset="50%" stopColor={waveColors[1]} />
-                                <Stop offset="100%" stopColor={waveColors[2]} />
+                                <Stop offset="0%" stopColor={topWaveColors[0]} />
+                                <Stop offset="50%" stopColor={topWaveColors[1]} />
+                                <Stop offset="100%" stopColor={topWaveColors[2]} />
                             </LinearGradient>
                         </Defs>
 
@@ -80,14 +83,14 @@ const LandingPage = ({ route }: { route: LandingPageRouteProp }) => {
                  <Pressable     
                     style={({ pressed }) => pressed ? Styles.dataTableButtonPressed : Styles.dataTableButtonNormal}
                 >
-               <Text style={Styles.dataTableButtonText}>DATA{"\n"}TABLE</Text>
+               <Text style={Styles.dataTableButtonText}>Missed{"\n"}Callers</Text>
                
                 </Pressable>
 
                 <Pressable     
                     style={({ pressed }) => pressed ? Styles.dataTableButtonPressed : Styles.dataTableButtonNormal}
                 >
-                    <Text style={Styles.dataTableButtonText}>LOG{"\n"}BOOK</Text>
+                    <Text style={Styles.dataTableButtonText}>Log{"\n"}Book</Text>
                
                 </Pressable>
             </View>
@@ -100,18 +103,32 @@ const LandingPage = ({ route }: { route: LandingPageRouteProp }) => {
                     >
 
                     <Defs>
-                        <LinearGradient id="bottomGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <Stop offset="0%" stopColor="#a0ace7" stopOpacity="1" />
-                            <Stop offset="100%" stopColor="#5f6bbd" stopOpacity="1" />
+                    <LinearGradient id="bottomWaveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <Stop offset="0%" stopColor={bottomWaveColors[0]} />
+                            <Stop offset="50%" stopColor={bottomWaveColors[1]} />
+                            <Stop offset="100%" stopColor={bottomWaveColors[2]} />
                         </LinearGradient>
                     </Defs>
+
                     <Path 
-                    fill="url(#bottomGrad)" 
+                    fill="url(#bottomWaveGradient)"
                     d="M0,256L48,261.3C96,267,192,277,288,266.7C384,256,480,224,576,213.3C672,203,768,213,864,229.3C960,245,1056,267,1152,261.3C1248,256,1344,224,1392,208L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
                     />
                 </Svg>
+
             </View>
-            <View style={Styles.horizontalBoarderBottom}></View>
+
+            <View style={Styles.horizontalBoarderBottom}>
+                <RNFLinearGradient 
+                colors={bottomColors}
+                start={{ x: 0, y: 0}}
+                end={{ x: 1, y: 1}}
+                locations={[0, .5, 1]}
+                useAngle={false}
+                style={Styles.gradientTop}
+                >
+                </RNFLinearGradient>
+            </View>
         </View>
     )
 }
@@ -143,6 +160,7 @@ const Styles = StyleSheet.create({
         fontWeight: '600',
         textAlign: 'left',
         zIndex: 2,
+        paddingBottom: 10,
     },
     userNameText: {
         color: '#fff',
@@ -150,6 +168,7 @@ const Styles = StyleSheet.create({
         fontWeight: '600',
         textAlign: 'left',
         zIndex: 2,
+        paddingBottom: 10,
     },
 
     childConatinerTop: {

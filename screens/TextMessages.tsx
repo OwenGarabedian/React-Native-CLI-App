@@ -1,61 +1,115 @@
 import React from 'react';
 import { View, Text, StyleSheet, SafeAreaView, Dimensions, Pressable, Alert, ScrollView } from 'react-native';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 const screenWidth = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
+let callerId = "";
 
-const ViewLooperComponent = () => {
-  const dataItems = [
-    { id: '1', title: '860 319 1074', message: 'This is a message' },
-    { id: '2', title: '123 456 7890', message: 'This is a message' },
-    { id: '3', title: '860 608 1411', message: 'This is a message' },
-    { id: '4', title: '203 856 0357', message: 'This is a message' },
-    { id: '5', title: '860 319 1074', message: 'This is a message' },
-    { id: '6', title: '123 456 7890', message: 'This is a message' },
-    { id: '7', title: '860 608 1411', message: 'This is a message' },
-    { id: '8', title: '203 856 0357', message: 'This is a message' },
-    { id: '9', title: '860 319 1074', message: 'This is a message' },
-    { id: '10', title: '123 456 7890', message: 'This is a message' },
-    { id: '11', title: '860 608 1411', message: 'This is a message' },
-    { id: '12', title: '203 856 0357', message: 'This is a message' },
-  ];
+interface Message {
+    sender: string;
+    text: string;
+    time: string;
+}
 
-  const handlePress = (item: { id: any; title: any; message?: string; }) => {
-    Alert.alert(`Tapped on ${item.title}`);
-    console.log('Pressed item ID:', item.id);
-  };
+interface Conversation { 
+    userId: string;
+    callerId: string;
+    callersName: string;
+    callersQuery: string;
+    callersAdress: string;
+    callersApointment: string;
+    initialTextSent: string;
+    conversationId: string;
+    messages: Message[]; 
+    messageId: string; 
+    lastMessageText?: string; 
+}
+
+const TextMessagesScreen = ({navigation}:{navigation:any}) => {
+
+    const [conversations, setConversations] = useState<Conversation[]>([]);
+
+        const handleTextOpen = (index: number) => {
+            const buttonIndex = index;
+
+            Alert.alert("Opening Text Strings");
+            navigation.navigate("TextMessagesRendering", {inputCode: buttonIndex});
+        }
+
+
+    const fetchData = async () => {
+        try {
+            const response = await axios.get('http://localhost:4000/userConversations'); 
+            const responseData: Conversation[] = response.data; // Type assertion
+
+            if (responseData && responseData.length > 0) {
+                
+                // Process the data to add the 'lastMessageText' property
+                const processedData = responseData.map(conversation => {
+                    const messages = conversation.messages;
+                    
+                    // Check if there are messages in the conversation
+                    if (messages && messages.length > 0) {
+                        // Get the text from the very last message in the array
+                        const lastMessage = messages[messages.length - 1];
+                        return {
+                            ...conversation,
+                            lastMessageText: lastMessage.text
+                        };
+                    }
+                    // If no messages array exists or it's empty, fall back to initialTextSent
+                    return {
+                        ...conversation,
+                        lastMessageText: conversation.initialTextSent
+                    };
+                });
+                
+                console.log("Processed conversations with last message:", processedData);
+                // Set the state with the processed array
+                setConversations(processedData);
+            }
+
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            Alert.alert("Error", "Failed to fetch data from the server.");
+        };
+    }
+
+    useEffect(() => {
+            fetchData();
+        }, []);
+
 
   return (
-    <ScrollView style={Styles.container}>
-        <SafeAreaView>
-        {/* Loop through the dataItems array */}
-            <View style={Styles.topContainer}>
-                <Text style={Styles.titleText}>TEXT MESSAGES</Text>
-            </View>
+        <ScrollView style={Styles.container}>
+            <SafeAreaView>
+                <View style={Styles.topContainer}>
+                    <Text style={Styles.titleText}>TEXT MESSAGES</Text>
+                </View>
 
+                {/* Map over the conversations state which now has the lastMessageText */}
+                {conversations.map((item, index) => (
+                    <View key={item.messageId}> 
+                        <Pressable 
+                        onPress={() => handleTextOpen(index)}
+                        style={({ pressed }) => [Styles.itemView, pressed ? Styles.textMessageButtonPressed : Styles.textMessageButtonNormal
+                            ]}>
 
-        {dataItems.map((item, index) => (
-            <View key={item.id}>
-
-                <Pressable style={({ pressed }) => [
-                        Styles.itemView, 
-                        pressed ? Styles.textMessageButtonPressed : Styles.textMessageButtonNormal
-                    ]}
-                onPress={() => handlePress(item)
-                }>
-
-                    <Text style={Styles.phoneNumber}>{item.title}</Text>
-                    <Text style={Styles.textMessage}>{item.message}</Text>
-                </Pressable>
-
-        {index < dataItems.length - 1 && (
-            <View style={Styles.borderLine}></View>
-        )}
-        </View>
-        ))}
-        </SafeAreaView>
-    </ScrollView>
-  );
+                            <Text style={Styles.phoneNumber}>{item.callerId}</Text>
+                            
+                            {/* Display the newly processed last message text */}
+                            <Text style={Styles.textMessage}>{item.lastMessageText}</Text> 
+                        </Pressable>
+                * {index < conversations.length - 1 && (
+                <View style={Styles.borderLine}></View>
+                )}
+                </View>
+                ))}
+            </SafeAreaView>
+        </ScrollView>
+      );
 };
 
 const Styles = StyleSheet.create({
@@ -70,10 +124,12 @@ const Styles = StyleSheet.create({
     alignItems: 'center',
   },
   borderLine: {
-    width: screenWidth * .95,
+    width: screenWidth * .96,
     height: 1, 
     backgroundColor: '#7b7b7bff',
     zIndex: 2,
+    alignSelf: 'center', 
+    opacity: .8,
   },
   titleText: {
     color: '#fff',
@@ -84,9 +140,10 @@ const Styles = StyleSheet.create({
   },
   itemView: {
     width: screenWidth,
-    height: screenHeight * .1,
+    height: screenHeight * .11,
+    justifyContent: 'center',
     backgroundColor: 'rgba(70, 70, 70, 1)',
-    gap: 10,
+    gap: 5,
     borderRadius: 3,
     margin: -1,
     zIndex: 1,
@@ -112,4 +169,4 @@ const Styles = StyleSheet.create({
   },
 });
 
-export default ViewLooperComponent;
+export default TextMessagesScreen;

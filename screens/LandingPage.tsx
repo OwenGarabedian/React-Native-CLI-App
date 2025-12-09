@@ -149,6 +149,9 @@ const LandingPage = ({ navigation, route }: LandingPageProps) => {
                     useAngle={false}
                     style={Styles.gradientTop}
                 >
+                <View style={Styles.tabChanger}>
+                    <Text>HELLO</Text>
+                </View>
                 </RNFLinearGradient>
             </View>
         </View>
@@ -165,6 +168,10 @@ const Styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    tabChanger: {
+        fontSize: 15,
+        zIndex: 1,
     },
 
     horizontalBoarderTop: {
@@ -235,7 +242,7 @@ const Styles = StyleSheet.create({
         height: horizontalBoarderHeightBottom,
         shadowColor: 'transparent',
         width: screenWidth,
-   
+        zIndex: 2,
     },
 
     dataTableButtonNormal: {

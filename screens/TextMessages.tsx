@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, Dimensions, Pressable, Alert, ScrollView } from 'react-native';
 
 const screenWidth = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
@@ -10,28 +10,51 @@ const ViewLooperComponent = () => {
     { id: '2', title: '123 456 7890', message: 'This is a message' },
     { id: '3', title: '860 608 1411', message: 'This is a message' },
     { id: '4', title: '203 856 0357', message: 'This is a message' },
+    { id: '5', title: '860 319 1074', message: 'This is a message' },
+    { id: '6', title: '123 456 7890', message: 'This is a message' },
+    { id: '7', title: '860 608 1411', message: 'This is a message' },
+    { id: '8', title: '203 856 0357', message: 'This is a message' },
+    { id: '9', title: '860 319 1074', message: 'This is a message' },
+    { id: '10', title: '123 456 7890', message: 'This is a message' },
+    { id: '11', title: '860 608 1411', message: 'This is a message' },
+    { id: '12', title: '203 856 0357', message: 'This is a message' },
   ];
 
-  return (
-    <SafeAreaView style={Styles.container}>
-      {/* Loop through the dataItems array */}
-        <View style={Styles.topContainer}>
-            <Text style={Styles.titleText}>TEXT MESSAGES</Text>
-        </View>
+  const handlePress = (item: { id: any; title: any; message?: string; }) => {
+    Alert.alert(`Tapped on ${item.title}`);
+    console.log('Pressed item ID:', item.id);
+  };
 
-      {dataItems.map((item, index) => (
-        <React.Fragment key={item.id}>
-            <View style={[Styles.itemView]}>
-                <Text style={Styles.phoneNumber}>{item.title}</Text>
-                <Text style={Styles.textMessage}>{item.message}</Text>
+  return (
+    <ScrollView style={Styles.container}>
+        <SafeAreaView>
+        {/* Loop through the dataItems array */}
+            <View style={Styles.topContainer}>
+                <Text style={Styles.titleText}>TEXT MESSAGES</Text>
             </View>
 
-      {index < dataItems.length - 1 && (
-        <View style={Styles.borderLine}></View>
-      )}
-    </React.Fragment>
-      ))}
-    </SafeAreaView>
+
+        {dataItems.map((item, index) => (
+            <View key={item.id}>
+
+                <Pressable style={({ pressed }) => [
+                        Styles.itemView, 
+                        pressed ? Styles.textMessageButtonPressed : Styles.textMessageButtonNormal
+                    ]}
+                onPress={() => handlePress(item)
+                }>
+
+                    <Text style={Styles.phoneNumber}>{item.title}</Text>
+                    <Text style={Styles.textMessage}>{item.message}</Text>
+                </Pressable>
+
+        {index < dataItems.length - 1 && (
+            <View style={Styles.borderLine}></View>
+        )}
+        </View>
+        ))}
+        </SafeAreaView>
+    </ScrollView>
   );
 };
 
@@ -39,8 +62,6 @@ const Styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#2d2d2dff',
-    alignItems: 'center',
-    gap: 0,
   },
   topContainer:{
     width: screenWidth,
@@ -82,7 +103,13 @@ const Styles = StyleSheet.create({
     paddingLeft: 10,
     fontWeight: 'bold',
     fontSize: 16,
-  }
+  },
+  textMessageButtonPressed: {
+
+  },
+  textMessageButtonNormal: {
+
+  },
 });
 
 export default ViewLooperComponent;

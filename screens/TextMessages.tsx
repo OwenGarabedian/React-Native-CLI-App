@@ -2,10 +2,21 @@ import React from 'react';
 import { View, Text, StyleSheet, SafeAreaView, Dimensions, Pressable, Alert, ScrollView } from 'react-native';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 const screenWidth = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
 let callerId = "";
+
+export type RootStackParamList = {
+    HomeScreen: undefined;
+    LogIn: undefined;
+    LoginScreen: undefined;
+    DataBase: undefined;
+    TextMessages: { inputCode: string };
+    LandingPage: undefined;
+    TextMessagesRendering: {textIndex: any, passingCode: string};
+};
 
 interface Message {
     sender: string;
@@ -27,7 +38,15 @@ interface Conversation {
     lastMessageText?: string; 
 }
 
-const TextMessagesScreen = ({navigation}:{navigation:any}) => {
+type LandingPageProps = NativeStackScreenProps<RootStackParamList, 'LandingPage'>;
+
+const TextMessagesScreen = ({ navigation, route }: LandingPageProps) => {
+
+    const { inputCode } = route.params;
+
+    const userName = inputCode;
+
+    console.log(userName);
 
     const [conversations, setConversations] = useState<Conversation[]>([]);
 
@@ -35,7 +54,7 @@ const TextMessagesScreen = ({navigation}:{navigation:any}) => {
             const buttonIndex = index;
 
             Alert.alert("Opening Text Strings");
-            navigation.navigate("TextMessagesRendering", {inputCode: buttonIndex});
+            navigation.navigate("TextMessagesRendering", {textIndex: buttonIndex, passingCode: userCode});
         }
 
 
@@ -80,7 +99,6 @@ const TextMessagesScreen = ({navigation}:{navigation:any}) => {
     useEffect(() => {
             fetchData();
         }, []);
-
 
   return (
         <ScrollView style={Styles.container}>

@@ -7,6 +7,7 @@ const textValue = "Enter Log In Code"
 interface UserDataEntry {
     code: string;
     name: string;
+    userId: string;
 }
 
 const LogIn = ({navigation}:{navigation:any}) => {
@@ -45,16 +46,19 @@ const LogIn = ({navigation}:{navigation:any}) => {
         let loggedIn = false;
         let passedPassword = inputValue.toString();
         let userName = "";
+        let userId = "";
 
         for(let i = 0; i < userData.length; i++){
             const userDataCode = userData[i].code;
-
+            console.log(userData)
 
 
             if (userDataCode == passedPassword) {
                 const userDataName = userData[i].name;
-                console.log("Name is: ",userDataName);
-                userName = userData[i].name;
+                const userDataId = userData[i].userId;
+                userName = userDataName;
+                userId = userDataId;
+                console.log("Name is: ",userId);
                 console.log(userData[i].code);
                 loggedIn = true
             }
@@ -62,7 +66,7 @@ const LogIn = ({navigation}:{navigation:any}) => {
         if (loggedIn) {
             Alert.alert("Button Pressed!", "Correct Log In!");
             console.log("Name will be: ", userName);
-            navigation.navigate("LandingPage", {inputCode: userName});
+            navigation.navigate("LandingPage", {inputCode: userName, userId: userId});
         }
         else {
             Alert.alert("Button Pressed!", "Incorrect Log In!");

@@ -13,7 +13,7 @@ export type RootStackParamList = {
     LoginScreen: undefined;
     DataBase: undefined;
     TextMessages: undefined;
-    LandingPage: { inputCode: string };
+    LandingPage: { inputCode: string; userId: string };
 };
 
 const screenWidth = Dimensions.get('screen').width;
@@ -35,7 +35,11 @@ type LandingPageProps = NativeStackScreenProps<RootStackParamList, 'LandingPage'
 
 const LandingPage = ({ navigation, route }: LandingPageProps) => {
 
-    const { inputCode } = route.params;
+    const { inputCode, userId } = route.params;
+
+
+    const userName = inputCode;
+    console.log("###############", userName);
 
     const headerColors = ['#9c55a1ff', '#b255b8ff', '#ac1fb6ff'];
     const topWaveColors = ['#9c55a1ff', '#b255b8ff', '#ac1fb6ff'];
@@ -46,7 +50,7 @@ const LandingPage = ({ navigation, route }: LandingPageProps) => {
 
     const handleTextMessages = () => {
         Alert.alert("Sending you to text messages");
-        navigation.navigate("TextMessages");
+        navigation.navigate("TextMessages", {inputCode: userId});
 
     }
 

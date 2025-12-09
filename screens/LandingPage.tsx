@@ -37,8 +37,8 @@ const LandingPage = ({ navigation, route }: LandingPageProps) => {
 
     const { inputCode } = route.params;
 
-    const headerColors = ['#782a7eff', '#974fd1ff', '#cb83fbff'];
-    const topWaveColors = ['#782a7eff', '#974fd1ff', '#cb83fbff'];
+    const headerColors = ['#9c55a1ff', '#b255b8ff', '#ac1fb6ff'];
+    const topWaveColors = ['#9c55a1ff', '#b255b8ff', '#ac1fb6ff'];
 
     const bottomColors = ['#a0ace7', '#5f6bbd', '#5e669bff'];
     const bottomWaveColors = ['#a0ace7', '#5f6bbd', '#5e669bff'];
@@ -161,6 +161,7 @@ const Styles = StyleSheet.create({
 
     container: {
         backgroundColor: '#ffffffff',
+        shadowColor: 'transparent',
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
@@ -171,13 +172,16 @@ const Styles = StyleSheet.create({
         width: screenWidth,
         justifyContent: 'flex-end',
         zIndex: 1,
+        marginBottom: -1, 
     },
     gradientTop: {
         flex: 1,
         justifyContent: 'flex-end',
+        shadowColor: 'transparent',
     },
     welcomeText: {
         color: '#fff',
+        shadowColor: 'transparent',
         fontSize: 36,
         fontWeight: '600',
         textAlign: 'left',
@@ -186,6 +190,7 @@ const Styles = StyleSheet.create({
     },
     userNameText: {
         color: '#fff',
+        shadowColor: 'transparent',
         fontSize: 24,
         fontWeight: '600',
         textAlign: 'left',
@@ -196,6 +201,7 @@ const Styles = StyleSheet.create({
     childConatinerTop: {
         width: screenWidth,
         height: topChildContainerHeight,
+        shadowColor: 'transparent',
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#ffffffff',
@@ -203,12 +209,14 @@ const Styles = StyleSheet.create({
     waveContainer: {
         width: screenWidth,
         height: screenHeight * .075,
+        shadowColor: 'transparent',
         zIndex: 1,
     },
     childConatinerBottom: {
         backgroundColor: '#ffffffff',
         width: screenWidth,
         height: doubleButtonChildContainerHeight,
+        shadowColor: 'transparent',
         justifyContent: 'space-evenly',
         flexDirection: 'row',
         alignItems: 'center',
@@ -216,6 +224,7 @@ const Styles = StyleSheet.create({
     },
     overviewContainer: {
         height: overviewHeight,
+        shadowColor: 'transparent',
         width: overviewWidth,
         borderRadius: 18,
         backgroundColor: '#c9bcbcff',
@@ -224,8 +233,9 @@ const Styles = StyleSheet.create({
 
     horizontalBoarderBottom: {
         height: horizontalBoarderHeightBottom,
+        shadowColor: 'transparent',
         width: screenWidth,
-        backgroundColor: '#a0ace7ff',
+   
     },
 
     dataTableButtonNormal: {

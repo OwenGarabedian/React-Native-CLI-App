@@ -12,9 +12,11 @@ export type RootStackParamList = {
     LogIn: undefined;
     LoginScreen: undefined;
     DataBase: undefined;
-    TextMessages: undefined;
-    LandingPage: { inputCode: string; userId: string };
+    TextMessages: { inputCode: string, inputName: string }; 
+    LandingPage: { inputName: string; userId: string };
+    TextMessageRendering: {textIndex: any, passingCode: string};
 };
+
 
 const screenWidth = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
@@ -35,10 +37,10 @@ type LandingPageProps = NativeStackScreenProps<RootStackParamList, 'LandingPage'
 
 const LandingPage = ({ navigation, route }: LandingPageProps) => {
 
-    const { inputCode, userId } = route.params;
+    const { inputName, userId } = route.params;
 
+    const userName = inputName;
 
-    const userName = inputCode;
     console.log("###############", userName);
 
     const headerColors = ['#9c55a1ff', '#b255b8ff', '#ac1fb6ff'];
@@ -50,7 +52,11 @@ const LandingPage = ({ navigation, route }: LandingPageProps) => {
 
     const handleTextMessages = () => {
         Alert.alert("Sending you to text messages");
-        navigation.navigate("TextMessages", {inputCode: userId});
+        navigation.navigate("TextMessages", { 
+            inputCode: userId, 
+            inputName: inputName 
+        });
+
 
     }
 
@@ -72,7 +78,7 @@ const LandingPage = ({ navigation, route }: LandingPageProps) => {
                 >
 
                     <Text style={Styles.welcomeText}>Welcome</Text>
-                    <Text style={Styles.userNameText}>{inputCode}</Text>
+                    <Text style={Styles.userNameText}>{inputName}</Text>
                 </RNFLinearGradient>
             </View>
 

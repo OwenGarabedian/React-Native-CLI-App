@@ -66,7 +66,7 @@ const LogIn = ({navigation}:{navigation:any}) => {
         if (loggedIn) {
             Alert.alert("Button Pressed!", "Correct Log In!");
             console.log("Name will be: ", userName);
-            navigation.navigate("LandingPage", {inputCode: userName, userId: userId});
+            navigation.navigate("LandingPage", {inputName: userName, userId: userId});
         }
         else {
             Alert.alert("Button Pressed!", "Incorrect Log In!");

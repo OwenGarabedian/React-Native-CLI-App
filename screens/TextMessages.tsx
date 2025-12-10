@@ -13,10 +13,11 @@ export type RootStackParamList = {
     LogIn: undefined;
     LoginScreen: undefined;
     DataBase: undefined;
-    TextMessages: { inputCode: string };
-    LandingPage: undefined;
-    TextMessagesRendering: {textIndex: any, passingCode: string};
+    TextMessages: { inputCode: string, inputName: string }; 
+    LandingPage: { inputName: string; userId: string };
+    TextMessageRendering: {textIndex: any, passingCode: string};
 };
+
 
 interface Message {
     sender: string;
@@ -38,24 +39,22 @@ interface Conversation {
     lastMessageText?: string; 
 }
 
-type LandingPageProps = NativeStackScreenProps<RootStackParamList, 'LandingPage'>;
+type TextMessagesProps = NativeStackScreenProps<RootStackParamList, 'TextMessages'>;
 
-const TextMessagesScreen = ({ navigation, route }: LandingPageProps) => {
+const TextMessagesScreen = ({ navigation, route }: TextMessagesProps) => {
 
-    const { inputCode } = route.params;
-
-    const userName = inputCode;
-
-    console.log(userName);
+    const { inputCode, inputName } = route.params; 
 
     const [conversations, setConversations] = useState<Conversation[]>([]);
 
         const handleTextOpen = (index: number) => {
-            const buttonIndex = index;
-
-            Alert.alert("Opening Text Strings");
-            navigation.navigate("TextMessagesRendering", {textIndex: buttonIndex, passingCode: userCode});
-        }
+        const buttonIndex = index;
+        Alert.alert("Opening Text Strings");
+        navigation.navigate("TextMessageRendering", { 
+            textIndex: buttonIndex, 
+            passingCode: inputCode,
+        });
+    }
 
 
     const fetchData = async () => {

@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, SafeAreaView, Dimensions, Pressable, Alert, ScrollView } from 'react-native';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 const screenWidth = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
@@ -26,12 +27,27 @@ interface Conversation {
     lastMessageText?: string; 
 }
 
-const TextMessagesScreen = () => {
+export type RootStackParamList = {
+    HomeScreen: undefined;
+    LogIn: undefined;
+    LoginScreen: undefined;
+    DataBase: undefined;
+    TextMessages: { inputCode: string, inputName: string }; 
+    LandingPage: { inputName: string; userId: string };
+    TextMessageRendering: {textIndex: any, passingCode: string};
+};
+
+
+type TextMessageRenderingProps = NativeStackScreenProps<RootStackParamList, 'TextMessageRendering'>;
+
+const TextMessagesRendering = ({ navigation, route }: TextMessageRenderingProps) => {
+
+    const { textIndex, passingCode } = route.params; 
 
   return (
         <View style={Styles.container}>
             <Text>
-                Render the texts
+                {textIndex} +++ {passingCode}
             </Text>
         </View>
       );
@@ -96,4 +112,4 @@ const Styles = StyleSheet.create({
   },
 });
 
-export default TextMessagesScreen;
+export default TextMessagesRendering;

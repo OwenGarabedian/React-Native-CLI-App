@@ -41,15 +41,64 @@ export type RootStackParamList = {
 type TextMessageRenderingProps = NativeStackScreenProps<RootStackParamList, 'TextMessageRendering'>;
 
 const TextMessagesRendering = ({ navigation, route }: TextMessageRenderingProps) => {
-
+    const [messages, setMessages] = useState<Message[]>([]);
     const { textIndex, passingCode } = route.params; 
+    const [phoneNumber, setPhoneNumber] = useState("");
+    const textIndexNum = textIndex.toString();
+
+
+    const fetchData = async () => {
+        try {
+            const response = await axios.get('http://localhost:4000/userConversations'); 
+            const responseData: Conversation[] = response.data; // Type assertion
+
+                const filteredByUser = responseData.filter(conversation => {
+                return conversation.userId === passingCode; 
+            });
+
+                const targetConversation = filteredByUser.find(conversation => {
+                return conversation.messageId === textIndexNum; 
+            });
+
+              if (targetConversation && targetConversation.messages) {
+              // Set the state with the exact 'messages' array from that object
+              setPhoneNumber(targetConversation.callerId); 
+              setMessages(targetConversation.messages);
+              console.log("Messages set:", targetConversation.messages);
+
+            } else {
+              console.log("No matching conversation or messages found.");
+              setMessages([]); // Ensure state is cleared if nothing is found
+            }
+
+          } catch (error) {
+            console.error("Error fetching data:", error);
+            Alert.alert("Error", "Failed to fetch data from the server.");
+        }
+    };
+
+    useEffect(() => {
+            fetchData();
+        }, []);
+
+//item.type === 'primary' ? styles.primaryItem : styles.secondaryItem
 
   return (
-        <View style={Styles.container}>
-            <Text>
-                {textIndex} +++ {passingCode}
-            </Text>
+    <View style={Styles.container}>
+        <View style={Styles.nameBar}>
+            <Text style={Styles.titleText}>{phoneNumber}</Text>
         </View>
+
+        <View >
+            {messages.map((item, index) => (
+              <View style={item.sender === 'AI' ? Styles.AItextBubble : Styles.humanTextBubble}> 
+                <Text style={Styles.bubbleText}>
+                  {messages[index].text}
+                </Text>
+              </View>
+            ))}
+        </View>
+    </View>
       );
 };
 
@@ -57,14 +106,15 @@ const Styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#2d2d2dff',
-    justifyContent: 'center',
-    alignItems: 'center',
+    // justifyContent: 'center',
+    // alignItems: 'center',
   },
-  topContainer:{
+  nameBar:{
     width: screenWidth,
-    height: screenHeight *.1,
+    height: screenHeight *.15,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#3b3b3bff'
   },
   borderLine: {
     width: screenWidth * .96,
@@ -76,20 +126,33 @@ const Styles = StyleSheet.create({
   },
   titleText: {
     color: '#fff',
-    paddingTop: 10,
+    paddingTop: 40,
     paddingLeft: 10,
     fontWeight: 'bold',
     fontSize: 40,
   },
-  itemView: {
-    width: screenWidth,
-    height: screenHeight * .11,
+  AItextBubble: {
+    width: screenWidth * .6,
+    // height: screenHeight,
     justifyContent: 'center',
-    backgroundColor: 'rgba(70, 70, 70, 1)',
-    gap: 5,
-    borderRadius: 3,
-    margin: -1,
+    alignItems: 'center',
+    backgroundColor: 'rgba(65, 130, 210, 1)',
+    borderRadius: 12,
     zIndex: 1,
+    margin: 10,
+    padding: 7,
+    alignSelf: 'flex-end'
+  },
+  humanTextBubble: {
+    width: screenWidth * .6,
+    // height: screenHeight,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(70, 70, 70, 1)',
+    borderRadius: 12,
+    zIndex: 1,
+    margin: 10,
+    padding: 7,
   },
   phoneNumber: {
     color: '#fff',
@@ -109,6 +172,12 @@ const Styles = StyleSheet.create({
   },
   textMessageButtonNormal: {
 
+  },
+  bubbleText: {
+    color: '#e5e5e5ff',
+    fontSize: 18,
+    padding: 5,
+    textAlign: 'left',
   },
 });
 

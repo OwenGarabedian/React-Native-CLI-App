@@ -48,13 +48,15 @@ const TextMessagesScreen = ({ navigation, route }: TextMessagesProps) => {
     const [conversations, setConversations] = useState<Conversation[]>([]);
 
         const handleTextOpen = (index: number) => {
-        const buttonIndex = index;
+        const buttonIndex = index + 1;
         Alert.alert("Opening Text Strings");
         navigation.navigate("TextMessageRendering", { 
             textIndex: buttonIndex, 
             passingCode: inputCode,
         });
     }
+
+    console.log("the userId is:", inputCode);
 
 
     const fetchData = async () => {
@@ -83,10 +85,16 @@ const TextMessagesScreen = ({ navigation, route }: TextMessagesProps) => {
                         lastMessageText: conversation.initialTextSent
                     };
                 });
+
+                const filteredData = processedData.filter(conversation => {
+                    return conversation.userId === inputCode; 
+                });
                 
-                console.log("Processed conversations with last message:", processedData);
-                // Set the state with the processed array
-                setConversations(processedData);
+                console.log("Filtered conversations:", filteredData);
+                
+                // Set the state with the filtered array
+                setConversations(filteredData);
+
             }
 
         } catch (error) {

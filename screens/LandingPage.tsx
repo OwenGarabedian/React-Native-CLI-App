@@ -39,9 +39,10 @@ const LandingPage = ({ navigation, route }: LandingPageProps) => {
 
     const { inputName, userId } = route.params;
 
-    const userName = inputName;
+    const passingUserId = userId;
+    const passingUserName = inputName;
 
-    console.log("###############", userName);
+    console.log(passingUserId, passingUserName)
 
     const headerColors = ['#9c55a1ff', '#b255b8ff', '#ac1fb6ff'];
     const topWaveColors = ['#9c55a1ff', '#b255b8ff', '#ac1fb6ff'];
@@ -53,8 +54,8 @@ const LandingPage = ({ navigation, route }: LandingPageProps) => {
     const handleTextMessages = () => {
         Alert.alert("Sending you to text messages");
         navigation.navigate("TextMessages", { 
-            inputCode: userId, 
-            inputName: inputName 
+            inputCode: passingUserId, 
+            inputName: passingUserName, 
         });
 
 

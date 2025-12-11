@@ -166,7 +166,8 @@ const Styles = StyleSheet.create({
   itemView: {
     width: screenWidth,
     height: screenHeight * .11,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
+    paddingTop: 4,
     backgroundColor: 'rgba(70, 70, 70, 1)',
     gap: 5,
     borderRadius: 3,

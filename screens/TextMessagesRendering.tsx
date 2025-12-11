@@ -1,11 +1,17 @@
-import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, Dimensions, Pressable, Alert, ScrollView } from 'react-native';
+import React, { useRef } from 'react';
+import { 
+    View, Text, StyleSheet, SafeAreaView, Dimensions, Pressable, 
+    Alert, ScrollView, TextInput, NativeSyntheticEvent, TextInputContentSizeChangeEventData 
+} from 'react-native';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 const screenWidth = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
+const messageWidth = 40;
+let bubbleHieght = 38;
+let messageLines = 0;
 
 interface Message {
     sender: string;
@@ -41,11 +47,57 @@ export type RootStackParamList = {
 type TextMessageRenderingProps = NativeStackScreenProps<RootStackParamList, 'TextMessageRendering'>;
 
 const TextMessagesRendering = ({ navigation, route }: TextMessageRenderingProps) => {
+
     const [messages, setMessages] = useState<Message[]>([]);
     const { textIndex, passingCode } = route.params; 
     const [phoneNumber, setPhoneNumber] = useState("");
     const textIndexNum = textIndex.toString();
 
+
+
+    const scrollViewRef = useRef<ScrollView>(null);
+    const [inputMessage, setInputMessage] = useState(""); 
+
+    const handleTextChange = (text: string) => {
+      const textLength = text.length;
+      const lastLength = inputMessage.length;
+
+      if (textLength > lastLength) {
+        const remainder = Math.floor(textLength % messageWidth);
+        console.log(textLength);
+        if(remainder == 0) {
+          console.log("it should be next line!");
+          bubbleHieght = bubbleHieght + 30;
+          messageLines++;
+        }
+      }
+      if (textLength < lastLength) {
+        const remainder = Math.floor(textLength % messageWidth);
+        console.log(textLength);
+        if(remainder == 39 && messageLines > 0) {
+          console.log("it should be del line!");
+          bubbleHieght = bubbleHieght - 30;
+          messageLines--;
+        }
+      }
+      // if (textLength % messageWidth > messageLines) {
+      //   console.log("it should be next line!");
+      //   bubbleHieght = bubbleHieght + 40;
+      //   return bubbleHieght;
+      // }
+      setInputMessage(text);
+    }
+
+    // const handleContentSizeChange = (text: string) => {
+    //   const newtext = text
+    //   setInputMessage("", newtext);
+    // }
+
+    useEffect(() => {
+        setTimeout(() => {
+            scrollViewRef.current?.scrollToEnd({ animated: true });
+        }, 100);
+    }, [messages]);
 
     const fetchData = async () => {
         try {
@@ -81,23 +133,32 @@ const TextMessagesRendering = ({ navigation, route }: TextMessageRenderingProps)
             fetchData();
         }, []);
 
-//item.type === 'primary' ? styles.primaryItem : styles.secondaryItem
+//item.type === 'primary' ? styles.primaryItem : styles.secondaryItem (this is what it looks like for different)
 
   return (
     <View style={Styles.container}>
         <View style={Styles.nameBar}>
-            <Text style={Styles.titleText}>{phoneNumber}</Text>
+          <Text style={Styles.titleText}>{phoneNumber}</Text>
         </View>
-
-        <View >
-            {messages.map((item, index) => (
-              <View style={item.sender === 'AI' ? Styles.AItextBubble : Styles.humanTextBubble}> 
-                <Text style={Styles.bubbleText}>
-                  {messages[index].text}
-                </Text>
-              </View>
-            ))}
-        </View>
+          <ScrollView>
+            <View>
+              {messages.map((item, index) => (
+                <View style={item.sender === 'AI' ? Styles.AItextBubble : Styles.humanTextBubble}> 
+                  <Text style={Styles.bubbleText}>
+                    {messages[index].text}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          </ScrollView>
+          <TextInput 
+          multiline={true}
+          // onContentSizeChange={handleContentSizeChange}
+          onChangeText={handleTextChange}
+          placeholder="Type here..."
+          style={[Styles.sendMessageBubble, { height: bubbleHieght }]}
+          >
+          </TextInput>
     </View>
       );
 };
@@ -106,15 +167,17 @@ const Styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#2d2d2dff',
-    // justifyContent: 'center',
+    justifyContent: 'flex-end',
     // alignItems: 'center',
   },
   nameBar:{
     width: screenWidth,
-    height: screenHeight *.15,
+    height: screenHeight * .15,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#3b3b3bff'
+    backgroundColor: '#3b3b3bff',
+    zIndex: 3,
+    opacity: .6
   },
   borderLine: {
     width: screenWidth * .96,
@@ -122,7 +185,6 @@ const Styles = StyleSheet.create({
     backgroundColor: '#7b7b7bff',
     zIndex: 2,
     alignSelf: 'center', 
-    opacity: .8,
   },
   titleText: {
     color: '#fff',
@@ -153,6 +215,20 @@ const Styles = StyleSheet.create({
     zIndex: 1,
     margin: 10,
     padding: 7,
+  },
+  sendMessageBubble: {
+    width: screenWidth * .85,
+    backgroundColor: '#2d2d2dff',
+    borderColor: '#929292ff',
+    borderWidth: 2,
+    marginBottom: 25,
+    borderRadius: 25,
+    alignSelf: 'center',
+    paddingRight: 15,
+    paddingLeft: 15,
+    paddingTop: 7,
+    paddingBottom: 10,
+    fontSize: 18,
   },
   phoneNumber: {
     color: '#fff',

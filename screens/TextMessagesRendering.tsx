@@ -9,8 +9,8 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 const screenWidth = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
-const messageWidth = 40;
-let bubbleHieght = 38;
+const messageWidth = 38;
+let bubbleHieght = 40;
 let messageLines = 0;
 
 interface Message {
@@ -93,6 +93,19 @@ const TextMessagesRendering = ({ navigation, route }: TextMessageRenderingProps)
     //   setInputMessage("", newtext);
     // }
 
+    const clearTextInput = () => {
+      setInputMessage("");
+    }
+
+    const sendTextMessage = () => {
+      Alert.alert("this will send a message!");
+      if(inputMessage == ""){
+        return
+      } else {
+        clearTextInput();
+      }
+    }
+
     useEffect(() => {
         setTimeout(() => {
             scrollViewRef.current?.scrollToEnd({ animated: true });
@@ -151,14 +164,22 @@ const TextMessagesRendering = ({ navigation, route }: TextMessageRenderingProps)
               ))}
             </View>
           </ScrollView>
-          <TextInput 
-          multiline={true}
-          // onContentSizeChange={handleContentSizeChange}
-          onChangeText={handleTextChange}
-          placeholder="Type here..."
-          style={[Styles.sendMessageBubble, { height: bubbleHieght }]}
-          >
-          </TextInput>
+          <View style={Styles.inputContainer}>
+            <TextInput 
+              multiline={true}
+              onChangeText={setInputMessage} // Simplified handler for the example
+              value={inputMessage} // Bind value to state
+              placeholder="Type here..."
+              style={Styles.sendMessageBubble}
+              placeholderTextColor="#929292ff"
+            />
+            <Pressable
+              onPress={sendTextMessage}
+              style={({ pressed }) => pressed ? Styles.sendButtonPressed : Styles.sendButton}
+            >
+              <Text style={{ color: 'white', fontWeight: 'bold' }}>Send</Text>
+            </Pressable>
+          </View>
     </View>
       );
 };
@@ -169,6 +190,36 @@ const Styles = StyleSheet.create({
     backgroundColor: '#2d2d2dff',
     justifyContent: 'flex-end',
     // alignItems: 'center',
+  },
+  sendButton: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 40, 
+    width: 60,
+    backgroundColor: '#4182d2',
+    borderRadius: 20,
+    marginLeft: 10,
+    marginBottom: 3,
+  },
+  sendButtonPressed: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 37, 
+    width: 55,
+    backgroundColor: '#4182d2',
+    borderRadius: 20,
+    marginLeft: 10,
+    marginBottom: 3,
+    opacity: .75,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    backgroundColor: '#2d2d2dff',
+    marginBottom: 10,
   },
   nameBar:{
     width: screenWidth,
@@ -195,7 +246,6 @@ const Styles = StyleSheet.create({
   },
   AItextBubble: {
     width: screenWidth * .6,
-    // height: screenHeight,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(65, 130, 210, 1)',
@@ -207,7 +257,6 @@ const Styles = StyleSheet.create({
   },
   humanTextBubble: {
     width: screenWidth * .6,
-    // height: screenHeight,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(70, 70, 70, 1)',
@@ -217,18 +266,18 @@ const Styles = StyleSheet.create({
     padding: 7,
   },
   sendMessageBubble: {
-    width: screenWidth * .85,
+    width: screenWidth * .7,
+    maxHeight: 160,
     backgroundColor: '#2d2d2dff',
     borderColor: '#929292ff',
+    textAlign: 'left',
     borderWidth: 2,
-    marginBottom: 25,
     borderRadius: 25,
-    alignSelf: 'center',
-    paddingRight: 15,
-    paddingLeft: 15,
-    paddingTop: 7,
+    paddingHorizontal: 15,
+    paddingTop: 15,
     paddingBottom: 10,
     fontSize: 18,
+    color: '#ffffffff',
   },
   phoneNumber: {
     color: '#fff',

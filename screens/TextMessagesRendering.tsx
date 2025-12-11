@@ -97,14 +97,35 @@ const TextMessagesRendering = ({ navigation, route }: TextMessageRenderingProps)
       setInputMessage("");
     }
 
-    const sendTextMessage = () => {
-      Alert.alert("this will send a message!");
-      if(inputMessage == ""){
-        return
-      } else {
-        clearTextInput();
-      }
+    const callN8nWebhook = async (dataToSend: any) => {
+  // IMPORTANT: Use your actual n8n Webhook Production URL here
+  const webhookUrl = 'https://owengarabedian9.app.n8n.cloud/webhook-test/3638addd-9a2b-4b60-a414-1d4df7bfe142'; 
+
+  try {
+    const response = await fetch(webhookUrl, {
+      method: 'POST',
+      body: JSON.stringify(dataToSend),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
+
+    const responseData = await response.json();
+    console.log('Webhook response:', responseData);
+  } catch (error) {
+    console.error('Error calling webhook:', error);
+  }
+};
+
+  const sendTextMessage = () => {
+    const data = {
+      user: phoneNumber,
+      textMessage: inputMessage,
+    };
+    callN8nWebhook(data);
+    clearTextInput();
+  };
 
     useEffect(() => {
         setTimeout(() => {
@@ -138,7 +159,6 @@ const TextMessagesRendering = ({ navigation, route }: TextMessageRenderingProps)
 
           } catch (error) {
             console.error("Error fetching data:", error);
-            Alert.alert("Error", "Failed to fetch data from the server.");
         }
     };
 
@@ -245,7 +265,7 @@ const Styles = StyleSheet.create({
     fontSize: 40,
   },
   AItextBubble: {
-    width: screenWidth * .6,
+    maxWidth: screenWidth * .6,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(65, 130, 210, 1)',
@@ -256,7 +276,7 @@ const Styles = StyleSheet.create({
     alignSelf: 'flex-end'
   },
   humanTextBubble: {
-    width: screenWidth * .6,
+    maxWidth: screenWidth * .6,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(70, 70, 70, 1)',

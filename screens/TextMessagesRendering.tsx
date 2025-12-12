@@ -13,7 +13,7 @@ const messageWidth = 38;
 let bubbleHieght = 40;
 let messageLines = 0;
 
-const backArrow = "<";
+const backArrow = "←"; 
 
 interface Message {
     sender: string;
@@ -100,7 +100,6 @@ const TextMessagesRendering = ({ navigation, route }: TextMessageRenderingProps)
     }
 
     const callN8nWebhook = async (dataToSend: any) => {
-  // IMPORTANT: Use your actual n8n Webhook Production URL here
   const webhookUrl = 'https://owengarabedian9.app.n8n.cloud/webhook-test/3638addd-9a2b-4b60-a414-1d4df7bfe142'; 
 
   try {
@@ -132,8 +131,12 @@ const TextMessagesRendering = ({ navigation, route }: TextMessageRenderingProps)
       user: phoneNumber,
       textMessage: inputMessage,
     };
-    callN8nWebhook(data);
-    clearTextInput();
+    if(data.textMessage == ""){
+      return;
+    } else {
+      callN8nWebhook(data);
+      clearTextInput();
+    }
   };
 
     useEffect(() => {
@@ -210,7 +213,7 @@ const TextMessagesRendering = ({ navigation, route }: TextMessageRenderingProps)
           <View style={Styles.inputContainer}>
             <TextInput 
               multiline={true}
-              onChangeText={setInputMessage} // Simplified handler for the example
+              onChangeText={setInputMessage} 
               value={inputMessage} // Bind value to state
               placeholder="Type here..."
               style={Styles.sendMessageBubble}
@@ -250,7 +253,7 @@ const Styles = StyleSheet.create({
     alignItems: 'center',
     height: 40, 
     width: 60,
-    backgroundColor: '#4182d2',
+    backgroundColor: '#2b83e6ff',
     borderRadius: 20,
     marginLeft: 10,
     marginBottom: 3,
@@ -260,7 +263,7 @@ const Styles = StyleSheet.create({
     alignItems: 'center',
     height: 37, 
     width: 55,
-    backgroundColor: '#4182d2',
+    backgroundColor: '#2b83e6ff',
     borderRadius: 20,
     marginLeft: 10,
     marginBottom: 3,
@@ -303,7 +306,7 @@ const Styles = StyleSheet.create({
     maxWidth: screenWidth * .6,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(65, 130, 210, 1)',
+    backgroundColor: '#2b83e6ff',
     borderRadius: 12,
     zIndex: 1,
     margin: 10,
@@ -314,7 +317,7 @@ const Styles = StyleSheet.create({
     maxWidth: screenWidth * .6,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(70, 70, 70, 1)',
+    backgroundColor: '#564c61ff',
     borderRadius: 12,
     zIndex: 1,
     margin: 10,

@@ -17,7 +17,7 @@ function RootStack() {
       <Stack.Screen name="HomeScreen" component={HomeScreen} options={{ headerShown: false}} />
       <Stack.Screen name="LogIn" component={LogIn} options={{ headerShown: false, gestureEnabled: false }} />
       <Stack.Screen name="LandingPage" component={LandingPage as any} options={{ headerShown: false, gestureEnabled: false }} />
-      <Stack.Screen name="DataBase" component={DataBase} options={{ headerShown: false, gestureEnabled: false }} />
+      <Stack.Screen name="DataBase" component={DataBase as any} options={{ headerShown: false, gestureEnabled: false }} />
       <Stack.Screen name="TextMessages" component={TextMessages as any} options={{ headerShown: false, gestureEnabled: false }} />
       <Stack.Screen name="TextMessageRendering" component={TextMessageRendering as any} options={{ headerShown: false, gestureEnabled: false }} />
     </Stack.Navigator>

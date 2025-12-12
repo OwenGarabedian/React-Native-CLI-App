@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, Dimensions, Pressable, Alert, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, Dimensions, Pressable, Alert, ScrollView, Platform } from 'react-native';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -7,7 +7,8 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 const screenWidth = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
 let callerId = "";
-const backArrow = "<";
+// Updated the visual representation of the arrow to a more modern, single character
+const backArrow = "←"; 
 
 export type RootStackParamList = {
     HomeScreen: undefined;
@@ -38,6 +39,7 @@ interface Conversation {
     messages: Message[]; 
     messageId: string; 
     lastMessageText?: string; 
+    lastSender?: string; 
 }
 
 type TextMessagesProps = NativeStackScreenProps<RootStackParamList, 'TextMessages'>;
@@ -74,23 +76,21 @@ const TextMessagesScreen = ({ navigation, route }: TextMessagesProps) => {
 
             if (responseData && responseData.length > 0) {
                 
-                // Process the data to add the 'lastMessageText' property
                 const processedData = responseData.map(conversation => {
                     const messages = conversation.messages;
                     
-                    // Check if there are messages in the conversation
                     if (messages && messages.length > 0) {
-                        // Get the text from the very last message in the array
                         const lastMessage = messages[messages.length - 1];
                         return {
                             ...conversation,
-                            lastMessageText: lastMessage.text
+                            lastMessageText: lastMessage.text,
+                            lastSender: lastMessage.sender
                         };
                     }
-                    // If no messages array exists or it's empty, fall back to initialTextSent
                     return {
                         ...conversation,
-                        lastMessageText: conversation.initialTextSent
+                        lastMessageText: conversation.initialTextSent,
+                        lastSender: 'You'
                     };
                 });
 
@@ -100,7 +100,6 @@ const TextMessagesScreen = ({ navigation, route }: TextMessagesProps) => {
                 
                 console.log("Filtered conversations:", filteredData);
                 
-                // Set the state with the filtered array
                 setConversations(filteredData);
 
             }
@@ -116,7 +115,6 @@ const TextMessagesScreen = ({ navigation, route }: TextMessagesProps) => {
 
         fetchData();
 
-    // Set up an interval to update the state every 1000 milliseconds (1 second)
     const interval = setInterval(() => {
       fetchData();
     }, 10000);
@@ -125,104 +123,123 @@ const TextMessagesScreen = ({ navigation, route }: TextMessagesProps) => {
   }, []);
 
   return (
-        <ScrollView style={Styles.container}>
-            <SafeAreaView>
-                <View style={Styles.topContainer}>
-                    <Pressable
-                              onPress={(goBack)}
-                              >
-                                <Text style={Styles.backArrow}>{backArrow}</Text>
-                              </Pressable>
-                    <Text style={Styles.titleText}>TEXT MESSAGES</Text>
+            <><View style={Styles.topContainer}>
+      <Pressable onPress={(goBack)} style={Styles.backArrowButton}>
+        <Text style={Styles.backArrow}>{backArrow}</Text>
+      </Pressable>
+      <Text style={Styles.titleText}>INBOX</Text>
+    </View><SafeAreaView style={Styles.safeAreaContainer}>
+        <ScrollView style={Styles.scrollViewContent}>
+          {conversations.map((item, index) => (
+            <View key={item.messageId}>
+              <Pressable
+                onPress={() => handleTextOpen(index)}
+                style={({ pressed }) => [Styles.itemView, pressed ? Styles.textMessageButtonPressed : Styles.textMessageButtonNormal
+                ]}>
+
+                <Text style={Styles.phoneNumber}>{item.callerId}</Text>
+
+                <View style={Styles.messageSnippetContainer}>
+                  {item.lastSender === 'You' && <Text style={Styles.messageSender}>You: </Text>}
+                  <Text style={Styles.textMessage} numberOfLines={1}>{item.lastMessageText}</Text>
                 </View>
 
-                {/* Map over the conversations state which now has the lastMessageText */}
-                {conversations.map((item, index) => (
-                    <View key={item.messageId}> 
-                        <Pressable 
-                        onPress={() => handleTextOpen(index)}
-                        style={({ pressed }) => [Styles.itemView, pressed ? Styles.textMessageButtonPressed : Styles.textMessageButtonNormal
-                            ]}>
+              </Pressable>
 
-                            <Text style={Styles.phoneNumber}>{item.callerId}</Text>
-                            
-                            {/* Display the newly processed last message text */}
-                            <Text style={Styles.textMessage}>{item.lastMessageText}</Text> 
-                        </Pressable>
-                {index < conversations.length - 1 && (
+              {index < conversations.length - 1 && (
                 <View style={Styles.borderLine}></View>
-                )}
-                </View>
-                ))}
-            </SafeAreaView>
+              )}
+            </View>
+          ))}
         </ScrollView>
+      </SafeAreaView></>
       );
 };
 
 const Styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#2d2d2dff',
-  },
-  topContainer:{
-    width: screenWidth,
-    height: screenHeight *.1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  backArrow: {
-    alignSelf: 'flex-start',
-    paddingRight: 320,
-    marginTop: -50,
-    fontWeight: 'bold',
-    fontSize: 36,
-    color: '#ffffffff'
-  },
-  borderLine: {
-    width: screenWidth * .96,
-    height: 1, 
-    backgroundColor: '#7b7b7bff',
-    zIndex: 2,
-    alignSelf: 'center', 
-    opacity: .8,
-  },
-  titleText: {
-    color: '#fff',
-    paddingTop: 10,
-    paddingLeft: 10,
-    fontWeight: 'bold',
-    fontSize: 40,
-  },
-  itemView: {
-    width: screenWidth,
-    height: screenHeight * .11,
-    justifyContent: 'flex-start',
-    paddingTop: 4,
-    backgroundColor: 'rgba(70, 70, 70, 1)',
-    gap: 5,
-    borderRadius: 3,
-    margin: -1,
-    zIndex: 1,
-  },
-  phoneNumber: {
-    color: '#fff',
-    paddingTop: 10,
-    paddingLeft: 10,
-    fontWeight: 'bold',
-    fontSize: 20,
-  },
-  textMessage: {
-    color: '#b09f9fff',
-    paddingLeft: 10,
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  textMessageButtonPressed: {
+    safeAreaContainer: {
+        flex: 1,
+        backgroundColor: '#212121', // Primary very dark background 212121
+    },
+    scrollViewContent: {
+        flex: 1,
+    },
+    topContainer:{
+        width: screenWidth,
+        height: screenHeight * .175, // Taller header
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingBottom: 15,
+        backgroundColor: '#9c55a1', // Primary purple accent color
+        ...Platform.select({ 
+            ios: {
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 4 }, 
+                shadowOpacity: 0.4,
+                shadowRadius: 5,
+            },
+            android: {
+                elevation: 6,
+            },
+        }),
+    },
+    backArrowButton: {
+        position: 'absolute',
+        left: 20,
+        bottom: 15,
+    },
+    backArrow: {
+        fontWeight: 'bold', // Bolder arrow
+        fontSize: 30, // Larger arrow symbol
+        color: '#FFFFFF' // White arrow on purple background
+    },
+    borderLine: {
+        width: screenWidth * .96, 
+        height: 1, 
+        backgroundColor: '#7b7b7bff', // The original gray separator color
+        alignSelf: 'center', 
+        opacity: 0.6,
+    },
+    titleText: {
+        color: '#FFFFFF', // White title text
+        fontWeight: '600', 
+        paddingTop: 45,
+        fontSize: 32, 
+    },
+    itemView: {
+        width: screenWidth,
+        height: screenHeight * .1, 
+        justifyContent: 'center',
+        paddingHorizontal: 20,
+        backgroundColor: '#2C2C2C', // Slightly lighter gray for item background
+    },
+    phoneNumber: {
+        color: '#e5c8efff', // Use primary purple to highlight the caller
+        fontWeight: 'bold',
+        fontSize: 18,
+        marginBottom: 4,
+    },
+    messageSnippetContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    messageSender: {
+        color: '#AAAAAA', 
+        fontSize: 14,
+        fontWeight: 'normal',
+    },
+    textMessage: {
+        color: '#CCCCCC',
+        fontSize: 14,
+        flexShrink: 1,
+        fontWeight: 'normal',
+    },
+    textMessageButtonPressed: {
+        backgroundColor: '#444444', 
+    },
+    textMessageButtonNormal: {
 
-  },
-  textMessageButtonNormal: {
-
-  },
+    },
 });
 
 export default TextMessagesScreen;

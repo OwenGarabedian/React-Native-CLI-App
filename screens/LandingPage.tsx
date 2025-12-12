@@ -1,9 +1,10 @@
-import { View, Text, Dimensions, StyleSheet, Button, TouchableOpacity, Pressable, Alert, TextInput } from 'react-native';
+import { View, Text, Dimensions, StyleSheet, Button, TouchableOpacity, Pressable, Alert, TextInput, Platform } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Svg, { Path, Defs, LinearGradient, Stop } from 'react-native-svg';
 import type { RouteProp } from '@react-navigation/native';
-import RNFLinearGradient from 'react-native-linear-gradient';
+// Assuming RNFLinearGradient is available and correctly linked in your project
+import RNFLinearGradient from 'react-native-linear-gradient'; 
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 
@@ -44,11 +45,11 @@ const LandingPage = ({ navigation, route }: LandingPageProps) => {
 
     console.log(passingUserId, passingUserName)
 
-    const headerColors = ['#9c55a1ff', '#b255b8ff', '#ac1fb6ff'];
-    const topWaveColors = ['#9c55a1ff', '#b255b8ff', '#ac1fb6ff'];
+    const headerColors = ['#9c55a1', '#b255b8', '#ac1fb6']; // Purple theme
+    const topWaveColors = ['#9c55a1', '#b255b8', '#ac1fb6'];
 
-    const bottomColors = ['#a0ace7', '#5f6bbd', '#5e669bff'];
-    const bottomWaveColors = ['#a0ace7', '#5f6bbd', '#5e669bff'];
+    const bottomColors = ['#a0ace7', '#5f6bbd', '#5e669b']; // Blue theme
+    const bottomWaveColors = ['#a0ace7', '#5f6bbd', '#5e669b'];
 
 
     const handleTextMessages = () => {
@@ -80,9 +81,10 @@ const LandingPage = ({ navigation, route }: LandingPageProps) => {
                     useAngle={false}
                     style={Styles.gradientTop}
                 >
-
-                    <Text style={Styles.welcomeText}>Welcome</Text>
-                    <Text style={Styles.userNameText}>{inputName}</Text>
+                    <View style={Styles.headerTextContainer}> 
+                      <Text style={Styles.welcomeText}>Welcome,</Text>
+                      <Text style={Styles.userNameText}>{inputName}</Text>
+                    </View>
                 </RNFLinearGradient>
             </View>
 
@@ -95,7 +97,8 @@ const LandingPage = ({ navigation, route }: LandingPageProps) => {
                 >
                     <Defs>
                         <LinearGradient id="topWaveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <Stop offset="0%" stopColor={topWaveColors[0]} />
+                             {/* Note: Svg LinearGradient requires stops inside Defs */}
+                            <Stop offset="0%" stopColor={topWaveColors[0]} /> 
                             <Stop offset="50%" stopColor={topWaveColors[1]} />
                             <Stop offset="100%" stopColor={topWaveColors[2]} />
                         </LinearGradient>
@@ -110,23 +113,35 @@ const LandingPage = ({ navigation, route }: LandingPageProps) => {
 
 
             <View style={Styles.childConatinerTop}>
-                <View style={Styles.overviewContainer}></View>
+                {/* Updated overview container styling */}
+                <View style={Styles.overviewContainer}>
+                    <Text style={Styles.overviewTitle}>Activity Overview</Text>
+                    <Text style={Styles.overviewStat}>Coming Soon</Text>
+                </View>
             </View>
 
             <View style={Styles.childConatinerBottom}>
                 <Pressable
-                    style={({ pressed }) => pressed ? Styles.dataTableButtonPressed : Styles.dataTableButtonNormal}
+                    style={({ pressed }) => [
+                        Styles.actionButton1, 
+                        { backgroundColor: '#ac1fb6' }, // Purple button color
+                        pressed ? Styles.dataTableButtonPressed : Styles.dataTableButtonNormal
+                    ]}
                     onPress={handleTextMessages}
                 >
-                    <Text style={Styles.textMessagesButton}>Text{"\n"}Messages</Text>
+                    <Text style={[Styles.buttonText, Styles.callerNumShadow]}>Text{"\n"}Messages</Text>
 
                 </Pressable>
 
                 <Pressable
-                    style={({ pressed }) => pressed ? Styles.dataTableButtonPressed : Styles.dataTableButtonNormal}
+                    style={({ pressed }) => [
+                        Styles.actionButton2, 
+                        { backgroundColor: '#5f6bbd' }, // Blue button color
+                        pressed ? Styles.dataTableButtonPressed : Styles.dataTableButtonNormal
+                    ]}
                     onPress={handleDataBase}
                 >
-                    <Text style={Styles.dataTableButtonText}>Caller{"\n"}Logs</Text>
+                    <Text style={[Styles.buttonText, Styles.callerNumShadow]}>Caller{"\n"}Logs</Text>
 
                 </Pressable>
             </View>
@@ -164,7 +179,6 @@ const LandingPage = ({ navigation, route }: LandingPageProps) => {
                     style={Styles.gradientTop}
                 >
                 <View style={Styles.tabChanger}>
-                    <Text>HELLO</Text>
                 </View>
                 </RNFLinearGradient>
             </View>
@@ -177,8 +191,7 @@ export default LandingPage
 const Styles = StyleSheet.create({
 
     container: {
-        backgroundColor: '#ffffffff',
-        shadowColor: 'transparent',
+        backgroundColor: '#212121', // Primary dark background
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
@@ -186,8 +199,10 @@ const Styles = StyleSheet.create({
     tabChanger: {
         fontSize: 15,
         zIndex: 1,
+        width: '100%',
+        textAlign: 'center',
+        paddingVertical: 10,
     },
-
     horizontalBoarderTop: {
         height: horizontalBoarderHeightTop,
         width: screenWidth,
@@ -198,101 +213,144 @@ const Styles = StyleSheet.create({
     gradientTop: {
         flex: 1,
         justifyContent: 'flex-end',
-        shadowColor: 'transparent',
+    },
+    headerTextContainer: { 
+        paddingLeft: 20,
+        paddingBottom: 15,
     },
     welcomeText: {
         color: '#fff',
-        shadowColor: 'transparent',
         fontSize: 36,
-        fontWeight: '600',
+        fontWeight: '300', 
         textAlign: 'left',
         zIndex: 2,
-        paddingBottom: 10,
     },
     userNameText: {
         color: '#fff',
-        shadowColor: 'transparent',
-        fontSize: 24,
-        fontWeight: '600',
+        fontSize: 28, 
+        fontWeight: '700',
         textAlign: 'left',
         zIndex: 2,
-        paddingBottom: 10,
     },
-
     childConatinerTop: {
         width: screenWidth,
         height: topChildContainerHeight,
-        shadowColor: 'transparent',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#ffffffff',
+        backgroundColor: '#212121', // Match dark background
+        zIndex: 0,
     },
     waveContainer: {
         width: screenWidth,
         height: screenHeight * .075,
-        shadowColor: 'transparent',
         zIndex: 1,
     },
     childConatinerBottom: {
-        backgroundColor: '#ffffffff',
+        backgroundColor: '#212121', // Match dark background
         width: screenWidth,
         height: doubleButtonChildContainerHeight,
-        shadowColor: 'transparent',
         justifyContent: 'space-evenly',
         flexDirection: 'row',
         alignItems: 'center',
-
+        zIndex: 0, 
     },
     overviewContainer: {
         height: overviewHeight,
-        shadowColor: 'transparent',
         width: overviewWidth,
-        borderRadius: 18,
-        backgroundColor: '#c9bcbcff',
+        borderRadius: 15,
+        backgroundColor: '#2C2C2C', 
         zIndex: 0,
+         ...Platform.select({
+            ios: {
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 5 },
+                shadowOpacity: 0.3, 
+                shadowRadius: 15,
+            },
+            android: {
+                elevation: 12,
+            },
+        }),
+        justifyContent: 'center',
+        alignItems: 'center',
     },
-
+    overviewTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: '#fff',
+        marginBottom: 8,
+    },
+    overviewStat: {
+        fontSize: 16,
+        color: '#fff',
+        opacity: 0.8,
+        paddingVertical: 2,
+    },
     horizontalBoarderBottom: {
         height: horizontalBoarderHeightBottom,
-        shadowColor: 'transparent',
         width: screenWidth,
         zIndex: 2,
+        marginTop: -1, 
     },
-
-    dataTableButtonNormal: {
+    actionButton1: { 
         width: doubleButtonsWidth,
-        height: doubleButtonsHeight,
-
-
-
-        backgroundColor: '#111111ff',
-        borderRadius: 8,
+        height: doubleButtonsHeight * 0.85, 
+        borderRadius: 12, 
         alignItems: 'center',
-        opacity: 1,
-        justifyContent: 'center'
+        justifyContent: 'center',
+        ...Platform.select({
+            ios: {
+                shadowColor: '#ac1fb6',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: .75,
+                shadowRadius: 8,
+            },
+            android: {
+                elevation: 5,
+            },
+        }),
+    },
+    actionButton2: { 
+        width: doubleButtonsWidth,
+        height: doubleButtonsHeight * 0.85, 
+        borderRadius: 12, 
+        alignItems: 'center',
+        justifyContent: 'center',
+        ...Platform.select({
+            ios: {
+                shadowColor: '#5f6bbd',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.75,
+                shadowRadius: 8,
+            },
+            android: {
+                elevation: 5,
+            },
+        }),
+    },
+    callerNumShadow: {
+    ...Platform.select({
+        ios: {
+            shadowColor: '#ffffffff',
+            shadowOffset: { width: 0, height: 0 },
+            shadowOpacity: 1,
+            shadowRadius: 10,
+        },
+        android: {
+        },
+    }),
+  },
+    buttonText: { 
+        color: '#fff',
+        fontSize: 22, 
+        fontWeight: '600',
+        textAlign: 'center',
+        paddingHorizontal: 5,
     },
     dataTableButtonPressed: {
-        width: doubleButtonsWidth,
-        height: doubleButtonsHeight,
-
-
-
-        backgroundColor: '#111111ff',
-        borderRadius: 8,
-        alignItems: 'center',
-        opacity: .75,
-        justifyContent: 'center'
+        opacity: 0.75, 
     },
-    dataTableButtonText: {
-        color: '#fff',
-        fontSize: 36,
-        fontWeight: '600',
-        textAlign: 'center',
-    },
-    textMessagesButton: {
-        color: '#fff',
-        fontSize: 34,
-        fontWeight: '600',
-        textAlign: 'center',
+    dataTableButtonNormal: {
+        opacity: 1,
     },
 });

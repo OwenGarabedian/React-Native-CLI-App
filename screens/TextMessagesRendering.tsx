@@ -13,6 +13,8 @@ const messageWidth = 38;
 let bubbleHieght = 40;
 let messageLines = 0;
 
+const backArrow = "<";
+
 interface Message {
     sender: string;
     text: string;
@@ -40,7 +42,7 @@ export type RootStackParamList = {
     DataBase: undefined;
     TextMessages: { inputCode: string, inputName: string }; 
     LandingPage: { inputName: string; userId: string };
-    TextMessageRendering: {textIndex: any, passingCode: string};
+    TextMessageRendering: {textIndex: any, passingCode: string, inputName: string};
 };
 
 
@@ -49,7 +51,7 @@ type TextMessageRenderingProps = NativeStackScreenProps<RootStackParamList, 'Tex
 const TextMessagesRendering = ({ navigation, route }: TextMessageRenderingProps) => {
 
     const [messages, setMessages] = useState<Message[]>([]);
-    const { textIndex, passingCode } = route.params; 
+    const { textIndex, passingCode, inputName } = route.params; 
     const [phoneNumber, setPhoneNumber] = useState("");
     const textIndexNum = textIndex.toString();
 
@@ -118,6 +120,13 @@ const TextMessagesRendering = ({ navigation, route }: TextMessageRenderingProps)
   }
 };
 
+  const goBack = () => {
+    navigation.navigate("TextMessages", { 
+            inputCode: passingCode, 
+            inputName: inputName, 
+        });
+  }
+
   const sendTextMessage = () => {
     const data = {
       user: phoneNumber,
@@ -163,17 +172,31 @@ const TextMessagesRendering = ({ navigation, route }: TextMessageRenderingProps)
     };
 
     useEffect(() => {
+    
             fetchData();
-        }, []);
+            
+        // Set up an interval to update the state every 1000 milliseconds (1 second)
+        const interval = setInterval(() => {
+          fetchData();
+        }, 10000);
+    
+        return () => clearInterval(interval);
+      }, []);
 
 //item.type === 'primary' ? styles.primaryItem : styles.secondaryItem (this is what it looks like for different)
 
   return (
     <View style={Styles.container}>
         <View style={Styles.nameBar}>
+          <Pressable
+          onPress={(goBack)}
+          >
+            <Text style={Styles.backArrow} >{backArrow}</Text>
+          </Pressable>
           <Text style={Styles.titleText}>{phoneNumber}</Text>
         </View>
-          <ScrollView>
+          <ScrollView
+          ref={scrollViewRef}>
             <View>
               {messages.map((item, index) => (
                 <View style={item.sender === 'AI' ? Styles.AItextBubble : Styles.humanTextBubble}> 
@@ -210,6 +233,17 @@ const Styles = StyleSheet.create({
     backgroundColor: '#2d2d2dff',
     justifyContent: 'flex-end',
     // alignItems: 'center',
+  },
+  scrollView: {
+    justifyContent: 'flex-end',
+  },
+  backArrow: {
+    alignSelf: 'flex-start',
+    paddingRight: 320,
+    marginTop: 10,
+    fontWeight: 'bold',
+    fontSize: 36,
+    color: '#ffffffff'
   },
   sendButton: {
     justifyContent: 'center',
@@ -248,7 +282,6 @@ const Styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#3b3b3bff',
     zIndex: 3,
-    opacity: .6
   },
   borderLine: {
     width: screenWidth * .96,
@@ -263,6 +296,8 @@ const Styles = StyleSheet.create({
     paddingLeft: 10,
     fontWeight: 'bold',
     fontSize: 40,
+    marginTop: -45,
+    opacity: .8,
   },
   AItextBubble: {
     maxWidth: screenWidth * .6,

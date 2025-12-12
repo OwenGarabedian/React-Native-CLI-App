@@ -11,7 +11,7 @@ export type RootStackParamList = {
     HomeScreen: undefined;
     LogIn: undefined;
     LoginScreen: undefined;
-    DataBase: undefined;
+    DataBase: { inputCode: string, inputName: string };
     TextMessages: { inputCode: string, inputName: string }; 
     LandingPage: { inputName: string; userId: string };
     TextMessageRendering: {textIndex: any, passingCode: string};
@@ -52,7 +52,6 @@ const LandingPage = ({ navigation, route }: LandingPageProps) => {
 
 
     const handleTextMessages = () => {
-        Alert.alert("Sending you to text messages");
         navigation.navigate("TextMessages", { 
             inputCode: passingUserId, 
             inputName: passingUserName, 
@@ -62,8 +61,12 @@ const LandingPage = ({ navigation, route }: LandingPageProps) => {
     }
 
     const handleDataBase = () => {
-        Alert.alert("Sending you to the data base");
-        navigation.navigate("DataBase");
+        navigation.navigate("DataBase", { 
+            inputCode: passingUserId, 
+            inputName: passingUserName, 
+        });
+
+
     }
 
     return (

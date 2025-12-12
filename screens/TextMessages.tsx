@@ -7,6 +7,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 const screenWidth = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
 let callerId = "";
+const backArrow = "<";
 
 export type RootStackParamList = {
     HomeScreen: undefined;
@@ -15,7 +16,7 @@ export type RootStackParamList = {
     DataBase: undefined;
     TextMessages: { inputCode: string, inputName: string }; 
     LandingPage: { inputName: string; userId: string };
-    TextMessageRendering: {textIndex: any, passingCode: string};
+    TextMessageRendering: {textIndex: any, passingCode: string, inputName: string};
 };
 
 
@@ -49,12 +50,19 @@ const TextMessagesScreen = ({ navigation, route }: TextMessagesProps) => {
 
         const handleTextOpen = (index: number) => {
         const buttonIndex = index + 1;
-        Alert.alert("Opening Text Strings");
         navigation.navigate("TextMessageRendering", { 
             textIndex: buttonIndex, 
             passingCode: inputCode,
+            inputName: inputName,
         });
     }
+
+    const goBack = () => {
+    navigation.navigate("LandingPage", { 
+    inputName: inputName,
+    userId: inputCode
+        });
+  }
 
     console.log("the userId is:", inputCode);
 
@@ -103,14 +111,28 @@ const TextMessagesScreen = ({ navigation, route }: TextMessagesProps) => {
         };
     }
 
+
     useEffect(() => {
-            fetchData();
-        }, []);
+
+        fetchData();
+
+    // Set up an interval to update the state every 1000 milliseconds (1 second)
+    const interval = setInterval(() => {
+      fetchData();
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
         <ScrollView style={Styles.container}>
             <SafeAreaView>
                 <View style={Styles.topContainer}>
+                    <Pressable
+                              onPress={(goBack)}
+                              >
+                                <Text style={Styles.backArrow}>{backArrow}</Text>
+                              </Pressable>
                     <Text style={Styles.titleText}>TEXT MESSAGES</Text>
                 </View>
 
@@ -127,7 +149,7 @@ const TextMessagesScreen = ({ navigation, route }: TextMessagesProps) => {
                             {/* Display the newly processed last message text */}
                             <Text style={Styles.textMessage}>{item.lastMessageText}</Text> 
                         </Pressable>
-                * {index < conversations.length - 1 && (
+                {index < conversations.length - 1 && (
                 <View style={Styles.borderLine}></View>
                 )}
                 </View>
@@ -147,6 +169,14 @@ const Styles = StyleSheet.create({
     height: screenHeight *.1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  backArrow: {
+    alignSelf: 'flex-start',
+    paddingRight: 320,
+    marginTop: -50,
+    fontWeight: 'bold',
+    fontSize: 36,
+    color: '#ffffffff'
   },
   borderLine: {
     width: screenWidth * .96,

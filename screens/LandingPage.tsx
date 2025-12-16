@@ -3,9 +3,10 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Svg, { Path, Defs, LinearGradient, Stop } from 'react-native-svg';
 import type { RouteProp } from '@react-navigation/native';
-// Assuming RNFLinearGradient is available and correctly linked in your project
 import RNFLinearGradient from 'react-native-linear-gradient'; 
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { Ionicons } from '@react-native-vector-icons/ionicons';
+
 
 
 export type RootStackParamList = {
@@ -26,10 +27,10 @@ const horizontalBoarderHeightTop = screenHeight * .175;
 const topChildContainerHeight = screenHeight * .35;
 const overviewWidth = screenWidth * .85;
 const overviewHeight = topChildContainerHeight * .8;
-const doubleButtonChildContainerHeight = screenHeight * .25;
+const doubleButtonChildContainerHeight = screenHeight * .23;
 const doubleButtonsWidth = screenWidth * .4;
 const doubleButtonsHeight = screenHeight * .225;
-const horizontalBoarderHeightBottom = screenHeight * .10;
+const horizontalBoarderHeightBottom = screenHeight * .15;
 
 
 type LandingPageProps = NativeStackScreenProps<RootStackParamList, 'LandingPage'>;
@@ -66,6 +67,14 @@ const LandingPage = ({ navigation, route }: LandingPageProps) => {
             inputCode: passingUserId, 
             inputName: passingUserName, 
         });
+
+        const handleSettingsPress = () => {
+        Alert.alert("Settings Clicked!");
+    }
+
+    const handleExtraPress = () => {
+        Alert.alert("Extra Tab Clicked!");
+    }
 
 
     }
@@ -176,10 +185,26 @@ const LandingPage = ({ navigation, route }: LandingPageProps) => {
                     end={{ x: 1, y: 1 }}
                     locations={[0, .5, 1]}
                     useAngle={false}
-                    style={Styles.gradientTop}
+                    style={Styles.gradientBottom} 
                 >
-                <View style={Styles.tabChanger}>
-                </View>
+                    <View style={Styles.tabChanger}>
+
+                        <Pressable style={Styles.tabButton} >
+                            <Ionicons name="settings-outline" size={24} color="#e0e0e0" />
+                            <Text style={Styles.tabButtonTextInactive}>Settings</Text>
+                        </Pressable>
+
+                        <Pressable style={Styles.tabButton} >
+                            <Ionicons name="home-outline" size={24} color="#FFFFFF" />
+                            <Text style={Styles.tabButtonTextActive}>Home</Text>
+                        </Pressable>
+
+                        <Pressable style={Styles.tabButton} >
+                            <Ionicons name="menu-outline" size={24} color="#e0e0e0" />
+                            <Text style={Styles.tabButtonTextInactive}>Extra</Text>
+                        </Pressable>
+
+                    </View>
                 </RNFLinearGradient>
             </View>
         </View>
@@ -193,15 +218,39 @@ const Styles = StyleSheet.create({
     container: {
         backgroundColor: '#212121', // Primary dark background
         flex: 1,
-        justifyContent: 'center',
+        // justifyContent: 'center',
         alignItems: 'center',
     },
     tabChanger: {
-        fontSize: 15,
-        zIndex: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        height: 70, // Fixed height for the tab bar area
+        paddingBottom: Platform.OS === 'ios' ? 10 : 0, // Add padding for iPhone safe area
+    },
+    tabButton: {
+        flex: 1, // Distributes space evenly
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 5,
+    },
+    tabButtonTextActive: {
+        color: '#FFFFFF', // Active color
+        fontSize: 12,
+        marginTop: 4,
+        fontWeight: '600',
+    },
+    tabButtonTextInactive: {
+        color: '#e0e0e0', // Inactive color (slightly greyed out)
+        fontSize: 12,
+        marginTop: 4,
+        opacity: 0.7,
+    },
+    gradientBottom: {
+        flex: 1,
         width: '100%',
-        textAlign: 'center',
-        paddingVertical: 10,
+        justifyContent: 'flex-start', 
+        alignItems: 'center', 
     },
     horizontalBoarderTop: {
         height: horizontalBoarderHeightTop,
@@ -291,6 +340,7 @@ const Styles = StyleSheet.create({
         width: screenWidth,
         zIndex: 2,
         marginTop: -1, 
+        justifyContent: 'center',
     },
     actionButton1: { 
         width: doubleButtonsWidth,

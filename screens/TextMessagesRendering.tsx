@@ -100,7 +100,7 @@ const TextMessagesRendering = ({ navigation, route }: TextMessageRenderingProps)
     }
 
     const callN8nWebhook = async (dataToSend: any) => {
-  const webhookUrl = 'https://owengarabedian9.app.n8n.cloud/webhook-test/3638addd-9a2b-4b60-a414-1d4df7bfe142'; 
+  const webhookUrl = 'https://owengarabedian9.app.n8n.cloud/webhook/3638addd-9a2b-4b60-a414-1d4df7bfe142'; 
 
   try {
     const response = await fetch(webhookUrl, {

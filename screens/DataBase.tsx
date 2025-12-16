@@ -22,11 +22,8 @@ export type RootStackParamList = {
   TextMessageRendering: { textIndex: any, passingCode: string, inputName: string };
 };
 
-
-interface Message {
-  sender: string;
-  text: string;
-  time: string;
+interface DateObject {
+    date: string;
 }
 
 interface callerLog {
@@ -46,6 +43,7 @@ const DataBaseScreen = ({ navigation, route }: DataBaseProps) => {
   const { inputCode, inputName } = route.params;
 
   const [callerLog, setCallerLog] = useState<callerLog[]>([]);
+  const [dates, setDates] = useState<DateObject[]>([]); 
   const [callerNum, setCallerNum] = useState(0);
 
   const goBack = () => {
@@ -62,7 +60,30 @@ const DataBaseScreen = ({ navigation, route }: DataBaseProps) => {
     try {
       const response = await axios.get('http://localhost:4000/callerLog');
       const responseData: callerLog[] = response.data;
-      console.log(responseData.length);
+
+        if (responseData && responseData.length > 0) {
+                
+
+        const filteredData = responseData.filter(callerLog => {
+            return callerLog.userId === inputCode; 
+              });
+              
+              console.log("Filtered conversations:", filteredData);
+              
+              setCallerLog(filteredData);
+
+              const extractedDates: DateObject[] = [];
+
+              for(let i = 0; i < filteredData.length; i++){
+                const oldDate = filteredData[i].date;
+                const newDateString = oldDate.slice(0, 10);
+                extractedDates.push({ date: newDateString });
+              }
+
+              setDates(extractedDates);
+            }
+
+      console.log(dates);
       setCallerNum(responseData.length);
     } catch {
       console.log("failed.");
@@ -84,7 +105,6 @@ const DataBaseScreen = ({ navigation, route }: DataBaseProps) => {
   return (
     <View style={Styles.container}>
 
-      {/* Added Header content with Button */}
       <View style={Styles.topContainer}>
             <Pressable onPress={(goBack)} style={Styles.backArrowButton}>
               <Text style={Styles.backArrow}>{backArrow}</Text>
@@ -94,17 +114,39 @@ const DataBaseScreen = ({ navigation, route }: DataBaseProps) => {
           </View>
       </View>
       
-      <View style={Styles.middleContainer}>
+      <ScrollView>
+        <View style={Styles.middleContainer}>
 
-          <View style={Styles.callsThisWeekContainer}>
-            <Text style={[Styles.callerNum, Styles.callerNumShadow]}>{callerNum}</Text> 
-            <Text style={Styles.callerNumDef}>Total Callers</Text>
+            <View style={Styles.callsThisWeekContainer}>
+              <Text style={[Styles.callerNum, Styles.callerNumShadow]}>{callerNum}</Text> 
+              <Text style={Styles.callerNumDef}>Total Callers</Text>
+            </View>
+
+            <View style={Styles.notCallsThisWeekContainer}></View>
           </View>
 
-          <View style={Styles.notCallsThisWeekContainer}></View>
+        <View style={Styles.callerLogContainer}>
+          <ScrollView>
+            {callerLog.map((item, index) => (
+              <View style={Styles.itemView}>
+                  <Text style={Styles.phoneNumber}>{item.from}</Text>
+  
+                  <View>
+                    <Text style={Styles.textMessage} numberOfLines={1}>{dates[index].date}</Text>
+                  </View>
+  
+                {index < callerLog.length - 1 && (
+                  <View style={Styles.borderLine}></View>
+                )}
+              </View>
+            ))}
+          </ScrollView>
         </View>
 
-    </View>
+        </ScrollView>
+
+      </View>
+
   );
 };
 
@@ -143,6 +185,25 @@ const Styles = StyleSheet.create({
     width: screenWidth * .4,
     height: doubleButtonsHeight,
     justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#444444', 
+    borderRadius: 20,
+    ...Platform.select({
+        ios: {
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.3,
+            shadowRadius: 5,
+        },
+        android: {
+            elevation: 8,
+        },
+    }),
+  },
+  callerLogContainer: {
+    alignSelf: 'center',
+    width: screenWidth * .9,
+    height: screenHeight * .7,
     alignItems: 'center',
     backgroundColor: '#444444', 
     borderRadius: 20,
@@ -229,29 +290,35 @@ const Styles = StyleSheet.create({
     fontSize: 32,
   },
   itemView: {
-    width: screenWidth,
-    height: screenHeight * .11,
+    width: screenWidth * .85,
+    height: screenHeight * .1,
     justifyContent: 'flex-start',
-    paddingTop: 4,
-    backgroundColor: 'rgba(70, 70, 70, 1)',
+    borderRadius: 20,
     gap: 5,
-    borderRadius: 3,
     margin: -1,
     zIndex: 1,
   },
   phoneNumber: {
     color: '#fff',
-    paddingTop: 10,
+    paddingTop: 20,
     paddingLeft: 10,
     fontWeight: 'bold',
     fontSize: 20,
   },
   textMessage: {
     color: '#b09f9fff',
-    paddingLeft: 10,
+    paddingLeft: 15,
+    padding: 5,
     fontWeight: 'bold',
     fontSize: 16,
   },
+  borderLine: {
+        width: screenWidth * .86, 
+        height: 1, 
+        backgroundColor: '#7b7b7bff', 
+        alignSelf: 'center', 
+        opacity: 0.6,
+    },
 });
 
 export default DataBaseScreen;

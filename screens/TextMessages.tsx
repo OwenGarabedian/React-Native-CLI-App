@@ -140,7 +140,7 @@ const TextMessagesScreen = ({ navigation, route }: TextMessagesProps) => {
                 <Text style={Styles.phoneNumber}>{item.callerId}</Text>
 
                 <View style={Styles.messageSnippetContainer}>
-                  {item.lastSender === 'You' && <Text style={Styles.messageSender}>You: </Text>}
+                  {<Text style={Styles.messageSender}></Text>}
                   <Text style={Styles.textMessage} numberOfLines={1}>{item.lastMessageText}</Text>
                 </View>
 
@@ -208,7 +208,7 @@ const Styles = StyleSheet.create({
     },
     itemView: {
         width: screenWidth,
-        height: screenHeight * .1, 
+        height: screenHeight * .12, 
         justifyContent: 'center',
         paddingHorizontal: 20,
         backgroundColor: '#2C2C2C', // Slightly lighter gray for item background
@@ -216,8 +216,9 @@ const Styles = StyleSheet.create({
     phoneNumber: {
         color: '#e5c8efff', // Use primary purple to highlight the caller
         fontWeight: 'bold',
-        fontSize: 18,
+        fontSize: 22,
         marginBottom: 4,
+        paddingBottom: 5,
     },
     messageSnippetContainer: {
         flexDirection: 'row',

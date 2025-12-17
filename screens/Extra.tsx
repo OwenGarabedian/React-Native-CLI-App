@@ -20,7 +20,6 @@ export type RootStackParamList = {
     TextMessageRendering: {textIndex: any, passingCode: string};
 };
 
-
 const screenWidth = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
 
@@ -38,11 +37,10 @@ type LandingPageProps = NativeStackScreenProps<RootStackParamList, 'LandingPage'
 
 
 
-const LandingPage = ({ navigation, route }: LandingPageProps) => {
+const ExtraPage = ({ navigation, route }: LandingPageProps) => {
 
-    const { inputName, userId } = route.params;
+    const { inputCode, inputName } = route.params;
 
-    console.log(userId, inputName)
 
     const headerColors = ['#9c55a1', '#b255b8', '#ac1fb6']; // Purple theme
     const topWaveColors = ['#9c55a1', '#b255b8', '#ac1fb6'];
@@ -52,33 +50,24 @@ const LandingPage = ({ navigation, route }: LandingPageProps) => {
 
 
     const handleTextMessages = () => {
-        navigation.navigate("TextMessages", { 
-            inputCode: userId, 
-            inputName: inputName, 
-        });
-
 
     }
 
     const handleSettings = () => {
-        navigation.navigate("SettingsPage", { 
-            inputCode: userId, 
-            inputName: inputName, 
+        navigation.navigate("SettingsPage", {
+            inputCode: inputCode,
+            inputName: inputName
+            });
+    }
+
+    const handleHomePage = () => {
+        navigation.navigate("LandingPage", {
+            inputName: inputName,
+            userId: inputCode
         });
     }
 
-    const handleExtra = () => {
-        navigation.navigate("ExtraPage", { 
-            inputCode: userId, 
-            inputName: inputName, 
-        });
-    }
-
-    const handleDataBase = () => {
-        navigation.navigate("DataBase", { 
-            inputCode: userId, 
-            inputName: inputName, 
-        });
+    const handleDataBase = () => {;
 
         const handleSettingsPress = () => {
         Alert.alert("Settings Clicked!");
@@ -93,78 +82,6 @@ const LandingPage = ({ navigation, route }: LandingPageProps) => {
 
     return (
         <View style={Styles.container}>
-            <View style={Styles.horizontalBoarderTop}>
-                <RNFLinearGradient
-                    colors={headerColors}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    locations={[0, .5, 1]}
-                    useAngle={false}
-                    style={Styles.gradientTop}
-                >
-                    <View style={Styles.headerTextContainer}> 
-                      <Text style={Styles.welcomeText}>Welcome,</Text>
-                      <Text style={Styles.userNameText}>{inputName}</Text>
-                    </View>
-                </RNFLinearGradient>
-            </View>
-
-            <View style={Styles.waveContainer}>
-
-                <Svg
-                    height={screenHeight * .40}
-                    width={screenWidth}
-                    viewBox='0, 0, 1440, 1250'
-                >
-                    <Defs>
-                        <LinearGradient id="topWaveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <Stop offset="0%" stopColor={topWaveColors[0]} /> 
-                            <Stop offset="50%" stopColor={topWaveColors[1]} />
-                            <Stop offset="100%" stopColor={topWaveColors[2]} />
-                        </LinearGradient>
-                    </Defs>
-
-                    <Path
-                        fill="url(#topWaveGradient)"
-                        d="M0,192L30,170.7C60,149,120,107,180,128C240,149,300,235,360,277.3C420,320,480,320,540,282.7C600,245,660,171,720,160C780,149,840,203,900,192C960,181,1020,107,1080,74.7C1140,43,1200,53,1260,80C1320,107,1380,149,1410,170.7L1440,192L1440,0L1410,0C1380,0,1320,0,1260,0C1200,0,1140,0,1080,0C1020,0,960,0,900,0C840,0,780,0,720,0C660,0,600,0,540,0C480,0,420,0,360,0C300,0,240,0,180,0C120,0,60,0,30,0L0,0Z"
-                    />
-                </Svg>
-            </View>
-
-
-            <View style={Styles.childConatinerTop}>
-                <View style={Styles.overviewContainer}>
-                    <Text style={Styles.overviewTitle}>Activity Overview</Text>
-                    <Text style={Styles.overviewStat}>Coming Soon</Text>
-                </View>
-            </View>
-
-            <View style={Styles.childConatinerBottom}>
-                <Pressable
-                    style={({ pressed }) => [
-                        Styles.actionButton1, 
-                        { backgroundColor: '#ac1fb6' }, // Purple button color
-                        pressed ? Styles.dataTableButtonPressed : Styles.dataTableButtonNormal
-                    ]}
-                    onPress={handleTextMessages}
-                >
-                    <Text style={[Styles.buttonText, Styles.callerNumShadow]}>Text{"\n"}Messages</Text>
-
-                </Pressable>
-
-                <Pressable
-                    style={({ pressed }) => [
-                        Styles.actionButton2, 
-                        { backgroundColor: '#5f6bbd' }, // Blue button color
-                        pressed ? Styles.dataTableButtonPressed : Styles.dataTableButtonNormal
-                    ]}
-                    onPress={handleDataBase}
-                >
-                    <Text style={[Styles.buttonText, Styles.callerNumShadow]}>Caller{"\n"}Logs</Text>
-
-                </Pressable>
-            </View>
-
             <View style={Styles.waveContainer}>
                 <Svg
                     height={screenHeight * .40}
@@ -203,15 +120,15 @@ const LandingPage = ({ navigation, route }: LandingPageProps) => {
                             <Text style={Styles.tabButtonTextInactive}>Settings</Text>
                         </Pressable>
 
-                        <Pressable style={Styles.tabButton}>
+                        <Pressable style={Styles.tabButton} onPress={handleHomePage}>
                             <View style={Styles.homeIconCircle}>
-                                <Home color="white" size={30} />
+                                <Home color="white" size={30}/>
                             </View>
                             <Text style={Styles.tabButtonTextActive}>Home</Text>
                         </Pressable>
 
                         <Pressable style={Styles.tabButton} >
-                            <MoreHorizontal color="white" size={24} onPress={handleExtra}/> 
+                            <MoreHorizontal color="white" size={24}/> 
                             <Text style={Styles.tabButtonTextInactive}>Extra</Text>
                         </Pressable>
                     </View>
@@ -221,7 +138,7 @@ const LandingPage = ({ navigation, route }: LandingPageProps) => {
     )
 }
 
-export default LandingPage
+export default ExtraPage
 
 const Styles = StyleSheet.create({
 

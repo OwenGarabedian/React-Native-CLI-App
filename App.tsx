@@ -6,6 +6,8 @@ import LandingPage from './screens/LandingPage'
 import DataBase from './screens/DataBase';
 import TextMessages from './screens/TextMessages'
 import TextMessageRendering from './screens/TextMessagesRendering';
+import SettingsPage from './screens/Settings';
+import ExtraPage from './screens/Extra';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -20,6 +22,8 @@ function RootStack() {
       <Stack.Screen name="DataBase" component={DataBase as any} options={{ headerShown: false, gestureEnabled: false }} />
       <Stack.Screen name="TextMessages" component={TextMessages as any} options={{ headerShown: false, gestureEnabled: false }} />
       <Stack.Screen name="TextMessageRendering" component={TextMessageRendering as any} options={{ headerShown: false, gestureEnabled: false }} />
+      <Stack.Screen name ="SettingsPage" component={SettingsPage as any} options={{headerShown: false, gestureEnabled: false}} />
+      <Stack.Screen name ="ExtraPage" component={ExtraPage as any} options={{headerShown: false, gestureEnabled: false}} />
     </Stack.Navigator>
   )
 }

@@ -199,7 +199,10 @@ const LandingPage = ({ navigation, route }: LandingPageProps) => {
                 >
                     <View style={Styles.tabChanger}>
                         <Pressable style={Styles.tabButton} onPress={handleSettings}>
-                            <Settings color="white" size={24} /> 
+
+                            <View style={Styles.smallIconCircle}>
+                                <Settings color="white" size={24} /> 
+                            </View>
                             <Text style={Styles.tabButtonTextInactive}>Settings</Text>
                         </Pressable>
 
@@ -211,7 +214,11 @@ const LandingPage = ({ navigation, route }: LandingPageProps) => {
                         </Pressable>
 
                         <Pressable style={Styles.tabButton} >
-                            <MoreHorizontal color="white" size={24} onPress={handleExtra}/> 
+
+                            <View style={Styles.smallIconCircle}>
+                                <MoreHorizontal color="white" size={24} onPress={handleExtra}/> 
+                            </View>
+
                             <Text style={Styles.tabButtonTextInactive}>Extra</Text>
                         </Pressable>
                     </View>
@@ -250,21 +257,38 @@ const Styles = StyleSheet.create({
         }),
     },
     homeIconCircle: {
-        width: screenWidth * .12,                
-        height: screenHeight * .05,             
-        borderRadius: 30,   
-        marginTop: 30,     
-        backgroundColor: '#5f6bbd',
+        width: screenWidth * .12,
+        height: screenHeight * .05,
+        borderRadius: 30,
+        marginTop: 30,
+        backgroundColor: '#6c77bbff',
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 5,
         elevation: 5,
-        shadowColor: '#000',
+        shadowColor: '#2e2e2eff',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.3,
         shadowRadius: 3,
         zIndex: 3,
-        
+    
+    },
+    smallIconCircle: {
+        width: screenWidth * .10,
+        height: screenHeight * .045,
+        borderRadius: 30,
+        marginTop: 30,
+        backgroundColor: '#7f87baff',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 5,
+        elevation: 5,
+        shadowColor: '#a8a8a8ff',
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0.3,
+        shadowRadius: 1,
+        opacity: .75,
+    
     },
     tabButton: {
         flex: 1, 

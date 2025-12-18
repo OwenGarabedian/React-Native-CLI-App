@@ -68,6 +68,18 @@ const SettingsPage = ({ navigation, route }: LandingPageProps) => {
             });
     }
 
+    const handleOWNERS_NUMBER = () => {
+        Alert.alert("send to editor")
+    }
+
+    const handleSTANDARD_MESSAGE = () => {
+        Alert.alert("send to editor")
+    }
+
+    const handleSTANDARD_REPEAT_MESSAGE = () => {
+        Alert.alert("send to editor")
+    }
+
     const handleDataBase = () => {
 
         const handleSettingsPress = () => {
@@ -121,15 +133,15 @@ const SettingsPage = ({ navigation, route }: LandingPageProps) => {
                 </View>
                 
                 <View style={Styles.middleContainer}>       
-                    <View style={Styles.callsThisWeekContainer}>
+                    <Pressable style={Styles.callsThisWeekContainer} onPress={handleOWNERS_NUMBER}>
                         <Text>OWNERS NUMBER</Text>
-                    </View>
-                    <View style={Styles.callsThisWeekContainer}>
+                    </Pressable>
+                    <Pressable style={Styles.callsThisWeekContainer} onPress={handleSTANDARD_MESSAGE}>
                         <Text>STANDARD MESSAGE</Text>
-                    </View>
-                    <View style={Styles.callsThisWeekContainer}>
+                    </Pressable>
+                    <Pressable style={Styles.callsThisWeekContainer} onPress={handleSTANDARD_REPEAT_MESSAGE}>
                         <Text>STANDARD REPEAT MESSAGE</Text>
-                    </View>
+                    </Pressable>
                 </View>
                 
                 <View style={Styles.waveContainer}>

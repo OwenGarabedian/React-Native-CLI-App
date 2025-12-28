@@ -6,6 +6,7 @@ import type { RouteProp } from '@react-navigation/native';
 import RNFLinearGradient from 'react-native-linear-gradient'; 
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Home, Settings, MoreHorizontal, MessageSquare, Phone } from 'lucide-react-native';
+import * as Keychain from 'react-native-keychain';
 
 
 export type RootStackParamList = {
@@ -81,17 +82,34 @@ const SettingsPage = ({ navigation, route }: LandingPageProps) => {
     }
 
     const handleDataBase = () => {
+    }
 
-        const handleSettingsPress = () => {
-        Alert.alert("Settings Clicked!");
+    const handleSettingsPress = () => {
+    Alert.alert("Settings Clicked!");
     }
 
     const handleExtraPress = () => {
         Alert.alert("Extra Tab Clicked!");
     }
 
+    const handleLogout = async () => {
+    try {
+        // This removes the userId and code from the Keychain entirely
+        await Keychain.resetGenericPassword();
+        
+        Alert.alert("Logged Out", "You have been successfully logged out.");
 
+        // Use 'replace' or 'reset' so the user can't click "back" to the logged-in area
+        navigation.reset({
+            index: 0,
+            routes: [{ name: 'HomeScreen' }], // Or 'LogIn'
+        });
+    } catch (error) {
+        console.error("Logout failed:", error);
+        Alert.alert("Error", "Could not complete logout.");
     }
+};
+
 
     return (
             <View style={Styles.container}>
@@ -111,7 +129,7 @@ const SettingsPage = ({ navigation, route }: LandingPageProps) => {
                     </RNFLinearGradient>
                 </View>
     
-                <View style={Styles.waveContainer}>
+                <View style={Styles.waveContainer} pointerEvents="none">
                     <Svg
                         height={screenHeight * .40}
                         width={screenWidth}
@@ -142,9 +160,12 @@ const SettingsPage = ({ navigation, route }: LandingPageProps) => {
                     <Pressable style={Styles.callsThisWeekContainer} onPress={handleSTANDARD_REPEAT_MESSAGE}>
                         <Text>STANDARD REPEAT MESSAGE</Text>
                     </Pressable>
+                    <Pressable style={Styles.callsThisWeekContainer} onPress={handleLogout}>
+                        <Text>Log Out</Text>
+                    </Pressable>
                 </View>
                 
-                <View style={Styles.waveContainer}>
+                <View style={Styles.waveContainer} pointerEvents="none">
                         <Svg
                             height={screenHeight * .40}
                             width={screenWidth}

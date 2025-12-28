@@ -1,24 +1,19 @@
-import { View, Text, Dimensions, StyleSheet, StatusBar, ScrollView, Image, Button, TouchableOpacity, Pressable, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, Dimensions, StyleSheet, StatusBar, Image, Pressable, Alert, ActivityIndicator } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Animated, { Extrapolation, interpolate, scrollTo, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue, useAnimatedRef, SharedValue } from 'react-native-reanimated';
-import {useNavigation} from '@react-navigation/native';
-
+import * as Keychain from 'react-native-keychain';
 
 const { width } = Dimensions.get('screen');
-
-
 const IMAGE_WIDTH = width * 0.75;
 const IMAGE_HEIGHT = IMAGE_WIDTH * 1.5;
 const initialX = width * 4;
-
 
 type CarouselItemProps = {
    image: string;
    index: number;
    scrollX: SharedValue<number>;
 };
-
 
 const CarouselItem = ({ image, index, scrollX }: CarouselItemProps) => {
    const AnimatedStyle = useAnimatedStyle(() => {
@@ -44,24 +39,17 @@ const CarouselItem = ({ image, index, scrollX }: CarouselItemProps) => {
        };
    });
 
-
    return (
-       <Animated.View
-           style={[Styles.imageContainer, AnimatedStyle]}
-       >
-           <Image
-               source={{ uri: image }}
-               resizeMode='cover'
-               style={Styles.image}
-           />
+       <Animated.View style={[Styles.imageContainer, AnimatedStyle]}>
+           <Image source={{ uri: image }} resizeMode='cover' style={Styles.image} />
        </Animated.View>
    );
 };
 
-const HomeScreen = ({navigation}:{navigation:any}) => {
-
-        const [images, setImages] = useState<string[]>([]);
-        const [isLoading, setIsLoading] = useState(true);
+const HomeScreen = ({ navigation }: { navigation: any }) => {
+    const [images, setImages] = useState<string[]>([]);
+    const [userData, setUserData] = useState<any[]>([]); // Added for auto-login
+    const [isLoading, setIsLoading] = useState(true);
 
     const scrollX = useSharedValue(0);
     const isScrolling = useSharedValue(false);
@@ -70,58 +58,82 @@ const HomeScreen = ({navigation}:{navigation:any}) => {
 
     const fetchData = async () => {
         try {
-            const response = await axios.get('http://localhost:4000/homescreen-data'); 
-            // The response.data should have the structure { data: [...] }
-            const responseData = response.data
+            const [imageRes, loginRes] = await Promise.all([
+                axios.get('http://localhost:4000/homescreen-data'),
+                axios.get('http://localhost:4000/login-data')
+            ]);
 
-            if (responseData && responseData.length > 0) {
-                const firstObject = responseData[0];
-
-                const imageUrls = firstObject.url;
-                console.log(imageUrls);
-                setImages(imageUrls);
-            } else {
-            console.log("No data found in the response for images.");
-            setImages([]);
+            if (imageRes.data && imageRes.data.length > 0) {
+                setImages(imageRes.data[0].url);
             }
 
-            setIsLoading(false);
+            if (loginRes.data) {
+                setUserData(loginRes.data[0]?.users || []);
+            }
+
         } catch (error) {
             console.error("Error fetching data:", error);
+            Alert.alert("Error", "Failed to connect to server.");
+        } finally {
             setIsLoading(false);
-            Alert.alert("Error", "Failed to fetch data from the server.");
         }
     };
+
     useEffect(() => {
         fetchData();
     }, []);
 
+    useEffect(() => {
+        const checkAutoLogin = async () => {
+            try {
+                const credentials = await Keychain.getGenericPassword();
+                if (credentials && userData.length > 0) {
+                    const savedUserId = credentials.username;
+                    const savedCode = credentials.password;
+
+                    const matchedUser = userData.find(
+                        (u) => u.userId === savedUserId && u.code === savedCode
+                    );
+
+                    if (matchedUser) {
+                        console.log("Auto-login: Found user", matchedUser.name);
+                        navigation.replace("LandingPage", { 
+                            inputName: matchedUser.name, 
+                            userId: matchedUser.userId 
+                        });
+                    }
+                }
+            } catch (error) {
+                console.log("Keychain error:", error);
+            }
+        };
+
+        if (userData.length > 0) {
+            checkAutoLogin();
+        }
+    }, [userData]);
+
     const onScrollHandler = useAnimatedScrollHandler({
        onScroll: (event) => {
-           scrollX.value = event.contentOffset.x
+           scrollX.value = event.contentOffset.x;
            isScrolling.value = true;
-           console.log(scrollX.value);
        },
        onMomentumEnd: event => {
            isScrolling.value = false;
-          
-           if (isScrolling.value == false && (scrollX.value <= width || scrollX.value >= width * 7)) {
-                if((scrollX.value <= width * 0)){
+           if (scrollX.value <= width || scrollX.value >= width * 7) {
+                if(scrollX.value <= width * 0){
                    scrollTo(animatedRef, (width * 3), 0, false);
                }
-               else if((scrollX.value >= 3216)){
+               else if(scrollX.value >= 3216){
                    scrollTo(animatedRef, (width * 5), 0, false);
                }
                else
-                //console.log("teleporting");
                 scrollTo(animatedRef, (width * 4), 0, false);
            }
-
        },
    });
 
     const handleContinuePress = () => {
-        //Alert.alert("Button Pressed!", "This will bring users to next page!");
         navigation.navigate("LogIn");
     };
 
@@ -129,18 +141,16 @@ const HomeScreen = ({navigation}:{navigation:any}) => {
         return (
             <View style={Styles.container}>
                 <ActivityIndicator size="large" color="#7c7085ff" />
-                <Text>Loading images...</Text>
+                <Text style={{marginTop: 10}}>Initializing...</Text>
             </View>
         );
     }
-
 
    return (
        <View style={Styles.container}>
            <Text style={Styles.titleText}>Title</Text>
            <View style={Styles.carouselContainer}>
                <StatusBar hidden />
-
                <Animated.ScrollView
                    showsHorizontalScrollIndicator={false}
                    horizontal={true}
@@ -148,7 +158,6 @@ const HomeScreen = ({navigation}:{navigation:any}) => {
                    onScroll={onScrollHandler}
                    scrollEventThrottle={16}
                    overScrollMode={'never'}
-                   scrollToOverflowEnabled={false}
                    ref={animatedRef}
                    onLayout={() => {
                        if (!isInitialized) {
@@ -158,15 +167,9 @@ const HomeScreen = ({navigation}:{navigation:any}) => {
                    }}
                >
                    {images.map((image, index) => ( 
-                       <CarouselItem
-                           key={`image_${index}`}
-                           image={image}
-                           index={index}
-                           scrollX={scrollX}
-                       />
+                       <CarouselItem key={`image_${index}`} image={image} index={index} scrollX={scrollX} />
                    ))}
                </Animated.ScrollView>
-               <Text></Text>
            </View>
 
         <Pressable
@@ -179,8 +182,7 @@ const HomeScreen = ({navigation}:{navigation:any}) => {
    )
 }
 
-
-export default HomeScreen
+export default HomeScreen;
 
 
 const Styles = StyleSheet.create({
